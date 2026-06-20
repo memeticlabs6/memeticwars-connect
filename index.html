@@ -69,19 +69,18 @@
   // Por ahora usamos un patrón estándar: cambiar el título del documento,
   // que es la forma más confiable de comunicación WebView -> Godot.
   function sendResultToGodot(publicKey) {
-    // Patrón 1: postMessage (si el WebView lo soporta)
-    if (window.godotBridge) {
-      window.godotBridge.postMessage(JSON.stringify({
-        type: 'wallet_connected',
-        publicKey: publicKey
-      }));
-    }
-    // Patrón 2: cambiar el título (Godot puede leer esto via JavaScriptBridge)
-    document.title = 'WALLET_CONNECTED:' + publicKey;
+    statusEl.textContent = '✅ Conectado, regresando al juego...';
+    statusEl.style.color = '#8fd68f';
+    setTimeout(() => {
+      window.location.href = 'memeticwars://onconnect?wallet=' + encodeURIComponent(publicKey);
+    }, 800);
   }
 
   function sendErrorToGodot(message) {
-    document.title = 'WALLET_ERROR:' + message;
+    setTimeout(() => {
+      window.location.href = 'memeticwars://onerror?message=' + encodeURIComponent(message);
+    }, 800);
+  }
   }
 
   async function connectWallet() {
