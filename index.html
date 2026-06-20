@@ -48,6 +48,7 @@
 <button id="connect-btn">Conectar Phantom</button>
 <div id="status"></div>
 <div id="wallet-address"></div>
+<button id="back-btn" style="margin-top: 24px; background: #333; font-size: 14px; padding: 10px 20px;">← Volver a MemeticWars</button>
 
 <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
@@ -83,9 +84,12 @@
   }
 
   async function connectWallet() {
+    alert('Paso 1: boton tocado');
     const provider = getProvider();
+    alert('Paso 2: provider = ' + (provider ? 'ENCONTRADO' : 'NO ENCONTRADO'));
 
     if (!provider) {
+      alert('Paso 3: sin provider, mostrando boton abrir Phantom');
       statusEl.textContent = 'Abre esta página dentro de la app de Phantom, o instala Phantom.';
       statusEl.style.color = '#e09b3d';
       // Si no hay Phantom, ofrecemos el deep link para abrir/instalar Phantom
@@ -97,14 +101,12 @@
     }
 
     try {
+      alert('Paso 4: entrando a connect()');
       connectBtn.disabled = true;
       statusEl.textContent = 'Conectando...';
-      alert('Intentando provider.connect()...');
 
       const resp = await provider.connect();
-      alert('Conectado! publicKey: ' + resp.publicKey);
-
-      const resp = await provider.connect();
+      alert('Paso 5: conectado! key=' + resp.publicKey);
       const publicKey = resp.publicKey.toString();
 
       statusEl.textContent = '✅ Conectado';
@@ -114,6 +116,7 @@
       sendResultToGodot(publicKey);
 
     } catch (err) {
+      alert('ERROR en connect(): ' + err.message);
       statusEl.textContent = 'Conexión cancelada o falló.';
       statusEl.style.color = '#e05050';
       connectBtn.disabled = false;
@@ -122,6 +125,10 @@
   }
 
   connectBtn.addEventListener('click', connectWallet);
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    window.location.href = 'memeticwars://onconnect?wallet=manual_return';
+  });
 
   // Auto-detecta si ya estaba conectado (sesión previa de Phantom)
   window.addEventListener('load', () => {
