@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeticWars - Conectar Wallet</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0a1f0f;
+    font-family: -apple-system, sans-serif;
+    color: white;
+  }
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  p { color: #aaa; font-size: 14px; margin-bottom: 30px; }
+  button {
+    background: linear-gradient(135deg, #ab9ff2, #6c4fd6);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; }
+  #status { margin-top: 20px; font-size: 14px; color: #6c4fd6; }
+  #wallet-address {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #8fd68f;
+    word-break: break-all;
+    max-width: 80%;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>🪖 MemeticWars</h1>
+<p>Conecta tu wallet de Phantom para continuar</p>
+
+<button id="connect-btn">Conectar Phantom</button>
+<div id="status"></div>
+<div id="wallet-address"></div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>
+  const connectBtn = document.getElementById('connect-btn');
+  const statusEl = document.getElementById('status');
+  const addressEl = document.getElementById('wallet-address');
+
+  // ── Detecta si Phantom está disponible (in-app browser de Phantom, o extensión) ──
+  function getProvider() {
+    if ('phantom' in window) {
+      const provider = window.phantom?.solana;
+      if (provider?.isPhantom) return provider;
+    }
+    return null;
+  }
+
+  // ── Comunicación de vuelta a Godot ──
+  // Godot WebView (vía godot-webview o similar) expone un puente JS.
+  // Por ahora usamos un patrón estándar: cambiar el título del documento,
+  // que es la forma más confiable de comunicación WebView -> Godot.
+  function sendResultToGodot(publicKey) {
+    // Patrón 1: postMessage (si el WebView lo soporta)
+    if (window.godotBridge) {
+      window.godotBridge.postMessage(JSON.stringify({
+        type: 'wallet_connected',
+        publicKey: publicKey
+      }));
+    }
+    // Patrón 2: cambiar el título (Godot puede leer esto via JavaScriptBridge)
+    document.title = 'WALLET_CONNECTED:' + publicKey;
+  }
+
+  function sendErrorToGodot(message) {
+    document.title = 'WALLET_ERROR:' + message;
+  }
+
+  async function connectWallet() {
+    const provider = getProvider();
+
+    if (!provider) {
+      statusEl.textContent = 'Abre esta página dentro de la app de Phantom, o instala Phantom.';
+      statusEl.style.color = '#e09b3d';
+      // Si no hay Phantom, ofrecemos el deep link para abrir/instalar Phantom
+      const currentUrl = encodeURIComponent(window.location.href);
+      const phantomDeepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+      connectBtn.textContent = 'Abrir en Phantom';
+      connectBtn.onclick = () => { window.location.href = phantomDeepLink; };
+      return;
+    }
+
+    try {
+      connectBtn.disabled = true;
+      statusEl.textContent = 'Conectando...';
+
+      const resp = await provider.connect();
+      const publicKey = resp.publicKey.toString();
+
+      statusEl.textContent = '✅ Conectado';
+      statusEl.style.color = '#8fd68f';
+      addressEl.textContent = publicKey;
+
+      sendResultToGodot(publicKey);
+
+    } catch (err) {
+      statusEl.textContent = 'Conexión cancelada o falló.';
+      statusEl.style.color = '#e05050';
+      connectBtn.disabled = false;
+      sendErrorToGodot(err.message || 'unknown_error');
+    }
+  }
+
+  connectBtn.addEventListener('click', connectWallet);
+
+  // Auto-detecta si ya estaba conectado (sesión previa de Phantom)
+  window.addEventListener('load', () => {
+    const provider = getProvider();
+    if (provider?.isConnected && provider?.publicKey) {
+      const publicKey = provider.publicKey.toString();
+      statusEl.textContent = '✅ Ya conectado';
+      addressEl.textContent = publicKey;
+      sendResultToGodot(publicKey);
+    }
+  });
+</script>
+
+</body>
+</html>
