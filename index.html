@@ -80,13 +80,10 @@
     setTimeout(() => {
       window.location.href = 'memeticwars://onerror?message=' + encodeURIComponent(message);
     }, 800);
-  
   }
 
   async function connectWallet() {
-    alert('Botón tocado, buscando provider...');
     const provider = getProvider();
-    alert('Provider encontrado: ' + (provider ? 'SI' : 'NO'));
 
     if (!provider) {
       statusEl.textContent = 'Abre esta página dentro de la app de Phantom, o instala Phantom.';
