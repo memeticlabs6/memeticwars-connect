@@ -99,6 +99,10 @@
     try {
       connectBtn.disabled = true;
       statusEl.textContent = 'Conectando...';
+      alert('Intentando provider.connect()...');
+
+      const resp = await provider.connect();
+      alert('Conectado! publicKey: ' + resp.publicKey);
 
       const resp = await provider.connect();
       const publicKey = resp.publicKey.toString();
