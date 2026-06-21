@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeticWars - Conectar Wallet</title>
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0a1f0f;
+    font-family: -apple-system, sans-serif;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  h1 { font-size: 24px; margin-bottom: 8px; text-align: center; }
+  p { color: #aaa; font-size: 14px; margin-bottom: 24px; text-align: center; max-width: 320px; }
+  button {
+    background: linear-gradient(135deg, #ab9ff2, #6c4fd6);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    max-width: 320px;
+  }
+  button:disabled { opacity: 0.5; }
+  .error { color: #ff6b6b; font-size: 13px; text-align: center; min-height: 18px; margin-top: 12px; }
+  .status { color: #6c4fd6; font-size: 14px; text-align: center; min-height: 18px; margin-top: 12px; }
+  .wallet-box {
+    background: #16241a;
+    border: 1px solid #2d4030;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12px;
+    color: #8fd68f;
+    word-break: break-all;
+    text-align: center;
+    margin-top: 16px;
+    max-width: 320px;
+  }
+  .check { font-size: 48px; text-align: center; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<h1>🪖 MemeticWars</h1>
+<p>Conecta tu wallet de Phantom para vincularla a tu cuenta</p>
+
+<div id="connect-view">
+  <button id="connect-phantom-btn">Conectar Phantom</button>
+  <div class="error" id="error-text"></div>
+  <div class="status" id="status-text"></div>
+  <div class="wallet-box" id="wallet-box" style="display:none;"></div>
+</div>
+
+<div id="done-view" style="display:none; text-align:center;">
+  <div class="check">✅</div>
+  <p style="color:#8fd68f; font-weight:bold;">¡Wallet vinculada!</p>
+  <p>Vuelve al juego e inicia sesión con tu correo.</p>
+  <button id="back-to-game-btn">← Volver a MemeticWars</button>
+</div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>
+  // ─────────────────────────────────────────────────────
+  //  CONFIGURACIÓN — debe coincidir con register.html
+  // ─────────────────────────────────────────────────────
+  const NAKAMA_URL = "http://192.168.1.74:7350";
+
+  // ── Leer el token de sesión y correo desde la URL ──
+  // register.html nos redirige aquí con: register-web3.html?token=XXX&email=YYY
+  const params = new URLSearchParams(window.location.search);
+  const sessionToken = params.get('token');
+  const userEmail = params.get('email') || '';
+
+  if (!sessionToken) {
+    document.getElementById('error-text').textContent =
+      'No se encontró sesión válida. Vuelve a registrarte desde el juego.';
+    document.getElementById('connect-phantom-btn').disabled = true;
+  }
+
+  function getProvider() {
+    if ('phantom' in window) {
+      const provider = window.phantom?.solana;
+      if (provider?.isPhantom) return provider;
+    }
+    return null;
+  }
+
+  document.getElementById('connect-phantom-btn').addEventListener('click', async () => {
+    const errorEl = document.getElementById('error-text');
+    const statusEl = document.getElementById('status-text');
+    const btn = document.getElementById('connect-phantom-btn');
+    const walletBox = document.getElementById('wallet-box');
+
+    errorEl.textContent = '';
+    const provider = getProvider();
+
+    if (!provider) {
+      // No estamos dentro de Phantom todavía: abrir esta MISMA página (con el token en la URL) dentro de Phantom
+      const currentUrl = encodeURIComponent(window.location.href);
+      const phantomDeepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+      btn.textContent = 'Abrir en Phantom';
+      btn.onclick = () => { window.location.href = phantomDeepLink; };
+      errorEl.textContent = 'Abre esta página dentro de Phantom para continuar.';
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+      statusEl.textContent = 'Conectando con Phantom...';
+
+      const resp = await provider.connect();
+      const publicKey = resp.publicKey.toString();
+
+      statusEl.textContent = 'Firma el mensaje para verificar la wallet...';
+
+      const message = `Verificar wallet para MemeticWars\nCuenta: ${userEmail}\nFecha: ${new Date().toISOString()}`;
+      const encodedMessage = new TextEncoder().encode(message);
+
+      const signed = await provider.signMessage(encodedMessage, 'utf8');
+      const signatureBase64 = btoa(String.fromCharCode(...signed.signature));
+
+      statusEl.textContent = 'Guardando...';
+
+      const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + sessionToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          objects: [{
+            collection: 'wallet',
+            key: 'solana_address',
+            value: JSON.stringify({
+              address: publicKey,
+              message: message,
+              signature: signatureBase64,
+              linked_at: Date.now()
+            }),
+            permission_read: 1,
+            permission_write: 1
+          }]
+        })
+      });
+
+      if (!writeResp.ok) {
+        const errData = await writeResp.json().catch(() => ({}));
+        throw new Error(errData.message || 'No se pudo guardar la wallet. Tu sesión pudo haber expirado.');
+      }
+
+      walletBox.style.display = 'block';
+      walletBox.textContent = '✅ ' + publicKey;
+      statusEl.textContent = '';
+      btn.style.display = 'none';
+
+      setTimeout(() => {
+        document.getElementById('connect-view').style.display = 'none';
+        document.getElementById('done-view').style.display = 'block';
+      }, 1000);
+
+    } catch (err) {
+      errorEl.textContent = err.message || 'No se pudo conectar/firmar. Intenta de nuevo.';
+      statusEl.textContent = '';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('back-to-game-btn').addEventListener('click', () => {
+    window.location.href = 'memeticwars://onconnect?status=ready';
+  });
+
+  // ── Auto-conectar si ya regresamos de Phantom y el provider ya está listo ──
+  window.addEventListener('load', () => {
+    const provider = getProvider();
+    if (provider?.isConnected && sessionToken) {
+      // Phantom ya está disponible al cargar (volvimos de "Abrir en Phantom") → intenta directo
+      document.getElementById('connect-phantom-btn').click();
+    }
+  });
+</script>
+
+</body>
+</html>
