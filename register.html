@@ -83,6 +83,30 @@
     cursor: pointer;
     text-decoration: underline;
   }
+  .choice-card {
+    background: #16241a;
+    border: 2px solid #2d4030;
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .choice-card:active {
+    border-color: #6c4fd6;
+  }
+  .choice-icon { font-size: 32px; margin-bottom: 8px; }
+  .choice-title { font-size: 17px; font-weight: bold; margin-bottom: 4px; }
+  .choice-desc { font-size: 12px; color: #999; }
+  .choice-tag {
+    display: inline-block;
+    background: #6c4fd622;
+    color: #ab9ff2;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
 </style>
 </head>
 <body>
@@ -96,8 +120,24 @@
   <div class="dot" id="dot3"></div>
 </div>
 
+<!-- PASO 0: Elección Web2 vs Web3 -->
+<div class="step active" id="step0">
+  <p style="text-align:center; color:#ccc; font-size:14px; margin-bottom:4px;">¿Cómo quieres jugar?</p>
+  <div class="choice-card" id="choice-free">
+    <div class="choice-icon">🎮</div>
+    <div class="choice-title">Jugar gratis</div>
+    <div class="choice-desc">Empieza con cartas básicas, sin necesidad de wallet</div>
+  </div>
+  <div class="choice-card" id="choice-web3">
+    <div class="choice-icon">🔗</div>
+    <div class="choice-title">Jugar con Web3</div>
+    <div class="choice-desc">Conecta Phantom y usa tus cartas NFT en el juego</div>
+    <div class="choice-tag">Cartas exclusivas + recompensas</div>
+  </div>
+</div>
+
 <!-- PASO 1: Registro / Login -->
-<div class="step active" id="step1">
+<div class="step" id="step1">
   <input type="email" id="email-input" placeholder="Correo electrónico" autocomplete="email">
   <input type="password" id="password-input" placeholder="Contraseña (mín. 8 caracteres)" autocomplete="new-password">
   <button id="register-btn">Crear cuenta</button>
@@ -133,8 +173,9 @@
 
   let currentSession = null;
   let connectedWallet = null;
+  let wantsWeb3 = false;
 
-  // ── Navegación entre pasos ──
+  // ── Navegación entre pasos (incluye paso 0) ──
   function goToStep(stepNumber) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('step' + stepNumber).classList.add('active');
@@ -146,6 +187,19 @@
       if (i === stepNumber) dot.classList.add('active');
     }
   }
+
+  // ─────────────────────────────────────────────────────
+  //  PASO 0 — Elegir Web2 (gratis) o Web3 (con wallet)
+  // ─────────────────────────────────────────────────────
+  document.getElementById('choice-free').addEventListener('click', () => {
+    wantsWeb3 = false;
+    goToStep(1);
+  });
+
+  document.getElementById('choice-web3').addEventListener('click', () => {
+    wantsWeb3 = true;
+    goToStep(1);
+  });
 
   // ─────────────────────────────────────────────────────
   //  PASO 1 — Registro / Login con Nakama REST API
@@ -210,6 +264,13 @@
       currentSession = data; // { token, refresh_token }
       statusEl.textContent = '';
       btn.disabled = false;
+
+      // Si eligió jugar gratis, saltar directo a confirmación
+      if (!wantsWeb3) {
+        goToStep(3);
+        document.getElementById('back-to-game-btn').textContent = '← Volver a MemeticWars';
+        return;
+      }
 
       // Verificar si ya tiene wallet vinculada
       const hasWallet = await checkExistingWallet();
