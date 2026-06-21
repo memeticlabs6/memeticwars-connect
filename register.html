@@ -168,12 +168,36 @@
   // ─────────────────────────────────────────────────────
   //  CONFIGURACIÓN — actualiza esta URL si usas ngrok
   // ─────────────────────────────────────────────────────
-  const NAKAMA_URL = "http://192.168.1.74:7350";  // IP local PC
+  const NAKAMA_URL = "http://127.0.0.1:7350";  // Cambiar por tu URL de ngrok cuando pruebes remoto
   const NAKAMA_SERVER_KEY = "defaultkey";
 
   let currentSession = null;
   let connectedWallet = null;
   let wantsWeb3 = false;
+
+  // ── Persistencia: sobrevive la recarga que hace Phantom al volver ──
+  function saveProgress() {
+    if (currentSession) {
+      localStorage.setItem('mw_session_token', currentSession.token);
+      localStorage.setItem('mw_wants_web3', wantsWeb3 ? '1' : '0');
+    }
+  }
+
+  function tryRestoreProgress() {
+    const savedToken = localStorage.getItem('mw_session_token');
+    const savedWeb3 = localStorage.getItem('mw_wants_web3');
+    if (savedToken) {
+      currentSession = { token: savedToken };
+      wantsWeb3 = savedWeb3 === '1';
+      return true;
+    }
+    return false;
+  }
+
+  function clearProgress() {
+    localStorage.removeItem('mw_session_token');
+    localStorage.removeItem('mw_wants_web3');
+  }
 
   // ── Navegación entre pasos (incluye paso 0) ──
   function goToStep(stepNumber) {
@@ -187,6 +211,14 @@
       if (i === stepNumber) dot.classList.add('active');
     }
   }
+
+  // ── Al cargar la página: si veníamos de Phantom, continuar donde quedamos ──
+  window.addEventListener('load', () => {
+    if (tryRestoreProgress()) {
+      // Ya teníamos sesión activa (volvimos de Phantom) → directo al paso de wallet
+      goToStep(2);
+    }
+  });
 
   // ─────────────────────────────────────────────────────
   //  PASO 0 — Elegir Web2 (gratis) o Web3 (con wallet)
@@ -264,9 +296,11 @@
       currentSession = data; // { token, refresh_token }
       statusEl.textContent = '';
       btn.disabled = false;
+      saveProgress();
 
       // Si eligió jugar gratis, saltar directo a confirmación
       if (!wantsWeb3) {
+        clearProgress();
         goToStep(3);
         document.getElementById('back-to-game-btn').textContent = '← Volver a MemeticWars';
         return;
@@ -389,6 +423,7 @@
       walletBox.textContent = '✅ ' + publicKey;
       statusEl.textContent = '';
       btn.style.display = 'none';
+      clearProgress();
 
       setTimeout(() => goToStep(3), 1200);
 
