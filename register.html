@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeticWars - Crear Cuenta</title>
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0a1f0f;
+    font-family: -apple-system, sans-serif;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  h1 { font-size: 26px; margin-bottom: 4px; text-align: center; }
+  .subtitle { color: #aaa; font-size: 14px; margin-bottom: 24px; text-align: center; }
+  .step {
+    display: none;
+    width: 100%;
+    max-width: 360px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .step.active { display: flex; }
+  input {
+    background: #16241a;
+    border: 1px solid #2d4030;
+    border-radius: 10px;
+    padding: 14px;
+    color: white;
+    font-size: 16px;
+  }
+  input:focus { outline: none; border-color: #6c4fd6; }
+  button {
+    background: linear-gradient(135deg, #ab9ff2, #6c4fd6);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button.secondary {
+    background: #263b29;
+  }
+  button:disabled { opacity: 0.5; }
+  .error { color: #ff6b6b; font-size: 13px; text-align: center; min-height: 18px; }
+  .status { color: #6c4fd6; font-size: 14px; text-align: center; min-height: 18px; }
+  .wallet-box {
+    background: #16241a;
+    border: 1px solid #2d4030;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12px;
+    color: #8fd68f;
+    word-break: break-all;
+    text-align: center;
+  }
+  .progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2d4030;
+  }
+  .dot.active { background: #6c4fd6; }
+  .dot.done { background: #8fd68f; }
+  .check { font-size: 48px; text-align: center; }
+  .link-text {
+    color: #ab9ff2;
+    font-size: 13px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<h1>🪖 MemeticWars</h1>
+<p class="subtitle">Crea tu cuenta y conecta tu wallet</p>
+
+<div class="progress">
+  <div class="dot" id="dot1"></div>
+  <div class="dot" id="dot2"></div>
+  <div class="dot" id="dot3"></div>
+</div>
+
+<!-- PASO 1: Registro / Login -->
+<div class="step active" id="step1">
+  <input type="email" id="email-input" placeholder="Correo electrónico" autocomplete="email">
+  <input type="password" id="password-input" placeholder="Contraseña (mín. 8 caracteres)" autocomplete="new-password">
+  <button id="register-btn">Crear cuenta</button>
+  <div class="error" id="step1-error"></div>
+  <div class="status" id="step1-status"></div>
+  <div class="link-text" id="toggle-login">¿Ya tienes cuenta? Inicia sesión</div>
+</div>
+
+<!-- PASO 2: Conectar y firmar con Phantom -->
+<div class="step" id="step2">
+  <p style="text-align:center; color:#ccc; font-size:14px;">Cuenta creada. Ahora conecta tu wallet de Phantom para vincularla.</p>
+  <button id="connect-phantom-btn">Conectar Phantom</button>
+  <div class="wallet-box" id="wallet-box" style="display:none;"></div>
+  <div class="error" id="step2-error"></div>
+  <div class="status" id="step2-status"></div>
+</div>
+
+<!-- PASO 3: Confirmación -->
+<div class="step" id="step3">
+  <div class="check">✅</div>
+  <p style="text-align:center; color:#8fd68f; font-size:16px; font-weight:bold;">¡Todo listo!</p>
+  <p style="text-align:center; color:#ccc; font-size:13px;">Tu cuenta y wallet están vinculadas. Vuelve al juego e inicia sesión con tu correo.</p>
+  <button id="back-to-game-btn">← Volver a MemeticWars</button>
+</div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>
+  // ─────────────────────────────────────────────────────
+  //  CONFIGURACIÓN — actualiza esta URL si usas ngrok
+  // ─────────────────────────────────────────────────────
+  const NAKAMA_URL = "http://127.0.0.1:7350";  // Cambiar por tu URL de ngrok cuando pruebes remoto
+  const NAKAMA_SERVER_KEY = "defaultkey";
+
+  let currentSession = null;
+  let connectedWallet = null;
+
+  // ── Navegación entre pasos ──
+  function goToStep(stepNumber) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + stepNumber).classList.add('active');
+
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('dot' + i);
+      dot.classList.remove('active', 'done');
+      if (i < stepNumber) dot.classList.add('done');
+      if (i === stepNumber) dot.classList.add('active');
+    }
+  }
+
+  // ─────────────────────────────────────────────────────
+  //  PASO 1 — Registro / Login con Nakama REST API
+  // ─────────────────────────────────────────────────────
+  let isLoginMode = false;
+
+  document.getElementById('toggle-login').addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    document.getElementById('register-btn').textContent = isLoginMode ? 'Iniciar sesión' : 'Crear cuenta';
+    document.getElementById('toggle-login').textContent = isLoginMode
+      ? '¿No tienes cuenta? Regístrate'
+      : '¿Ya tienes cuenta? Inicia sesión';
+    document.getElementById('step1-error').textContent = '';
+  });
+
+  document.getElementById('register-btn').addEventListener('click', async () => {
+    const email = document.getElementById('email-input').value.trim();
+    const password = document.getElementById('password-input').value;
+    const errorEl = document.getElementById('step1-error');
+    const statusEl = document.getElementById('step1-status');
+    const btn = document.getElementById('register-btn');
+
+    errorEl.textContent = '';
+
+    if (!email || !password) {
+      errorEl.textContent = 'Completa correo y contraseña';
+      return;
+    }
+    if (password.length < 8) {
+      errorEl.textContent = 'La contraseña debe tener al menos 8 caracteres';
+      return;
+    }
+
+    btn.disabled = true;
+    statusEl.textContent = 'Conectando...';
+
+    try {
+      const create = isLoginMode ? 'false' : 'true';
+      const basicAuth = btoa(NAKAMA_SERVER_KEY + ':');
+
+      const resp = await fetch(
+        `${NAKAMA_URL}/v2/account/authenticate/email?create=${create}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + basicAuth,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: email, password: password })
+        }
+      );
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        errorEl.textContent = data.message || 'Error al crear la cuenta';
+        statusEl.textContent = '';
+        btn.disabled = false;
+        return;
+      }
+
+      currentSession = data; // { token, refresh_token }
+      statusEl.textContent = '';
+      btn.disabled = false;
+
+      // Verificar si ya tiene wallet vinculada
+      const hasWallet = await checkExistingWallet();
+      if (hasWallet) {
+        goToStep(3);
+      } else {
+        goToStep(2);
+      }
+
+    } catch (err) {
+      errorEl.textContent = 'No se pudo conectar al servidor. Verifica tu conexión.';
+      statusEl.textContent = '';
+      btn.disabled = false;
+    }
+  });
+
+  // ─────────────────────────────────────────────────────
+  //  Verificar si la cuenta ya tiene wallet vinculada
+  // ─────────────────────────────────────────────────────
+  async function checkExistingWallet() {
+    try {
+      const resp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + currentSession.token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          object_ids: [{ collection: 'wallet', key: 'solana_address' }]
+        })
+      });
+      const data = await resp.json();
+      return data.objects && data.objects.length > 0;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────
+  //  PASO 2 — Conectar Phantom + firmar verificación
+  // ─────────────────────────────────────────────────────
+  function getProvider() {
+    if ('phantom' in window) {
+      const provider = window.phantom?.solana;
+      if (provider?.isPhantom) return provider;
+    }
+    return null;
+  }
+
+  document.getElementById('connect-phantom-btn').addEventListener('click', async () => {
+    const errorEl = document.getElementById('step2-error');
+    const statusEl = document.getElementById('step2-status');
+    const btn = document.getElementById('connect-phantom-btn');
+    const walletBox = document.getElementById('wallet-box');
+
+    errorEl.textContent = '';
+    const provider = getProvider();
+
+    if (!provider) {
+      // No estamos dentro de Phantom: ofrecer abrir esta misma página dentro de Phantom
+      const currentUrl = encodeURIComponent(window.location.href);
+      const phantomDeepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+      btn.textContent = 'Abrir en Phantom';
+      btn.onclick = () => { window.location.href = phantomDeepLink; };
+      errorEl.textContent = 'Abre esta página dentro de Phantom para continuar.';
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+      statusEl.textContent = 'Conectando con Phantom...';
+
+      const resp = await provider.connect();
+      const publicKey = resp.publicKey.toString();
+
+      statusEl.textContent = 'Firma el mensaje para verificar que eres dueño de esta wallet...';
+
+      // Mensaje único de verificación
+      const message = `Verificar wallet para MemeticWars\nCuenta: ${document.getElementById('email-input').value}\nFecha: ${new Date().toISOString()}`;
+      const encodedMessage = new TextEncoder().encode(message);
+
+      const signed = await provider.signMessage(encodedMessage, 'utf8');
+      const signatureBase64 = btoa(String.fromCharCode(...signed.signature));
+
+      statusEl.textContent = 'Guardando...';
+
+      // Guardar wallet + firma en Nakama Storage (vinculado a la cuenta)
+      const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + currentSession.token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          objects: [{
+            collection: 'wallet',
+            key: 'solana_address',
+            value: JSON.stringify({
+              address: publicKey,
+              message: message,
+              signature: signatureBase64,
+              linked_at: Date.now()
+            }),
+            permission_read: 1,
+            permission_write: 1
+          }]
+        })
+      });
+
+      if (!writeResp.ok) {
+        throw new Error('No se pudo guardar la wallet');
+      }
+
+      connectedWallet = publicKey;
+      walletBox.style.display = 'block';
+      walletBox.textContent = '✅ ' + publicKey;
+      statusEl.textContent = '';
+      btn.style.display = 'none';
+
+      setTimeout(() => goToStep(3), 1200);
+
+    } catch (err) {
+      errorEl.textContent = err.message || 'No se pudo conectar/firmar. Intenta de nuevo.';
+      statusEl.textContent = '';
+      btn.disabled = false;
+    }
+  });
+
+  // ─────────────────────────────────────────────────────
+  //  PASO 3 — Volver al juego
+  // ─────────────────────────────────────────────────────
+  document.getElementById('back-to-game-btn').addEventListener('click', () => {
+    window.location.href = 'memeticwars://onconnect?status=ready';
+  });
+</script>
+
+</body>
+</html>
