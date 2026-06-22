@@ -191,24 +191,30 @@
       const regBtn = document.getElementById('register-btn');
       if (regBtn) regBtn.textContent = "Connect & Register";
 
-      // Detectamos si es un dispositivo móvil de manera segura
+      // Detectamos si es móvil
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const hasWallet = hasPhantomWallet();
 
-      // SI ES MÓVIL Y NO ESTÁ EN PHANTOM: Ejecuta el salto limpio que tú tenías
+      // SI ES MÓVIL Y NO ESTÁ EN PHANTOM:
       if (isMobile && !hasWallet) {
         const statusErr = document.getElementById('step0-error');
         if (statusErr) statusErr.textContent = "Opening Phantom Wallet...";
         
-        // URL fija y codificada sin interferencias de variables dinámicas externas
         const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html";
         const phantomDeepLink = "https://phantom.app/ul/browse/" + encodeURIComponent(targetUrl) + "?ref=" + encodeURIComponent("https://memeticlabs6.github.io");
         
-        window.location.href = phantomDeepLink;
+        // 🚀 EL TRUCO: Crear un enlace invisible y simular un clic nativo para evitar el bloqueo del SO
+        const hiddenLink = document.createElement('a');
+        hiddenLink.href = phantomDeepLink;
+        hiddenLink.target = "_blank"; // A veces necesario en iOS para forzar la apertura de app
+        document.body.appendChild(hiddenLink);
+        hiddenLink.click();
+        document.body.removeChild(hiddenLink);
+        
         return;
       }
 
-      // Si está en PC o dentro de la dApp nativa de Phantom móvil, avanza al formulario sin desvíos
+      // Si es PC o ya está en Phantom, abre el formulario
       goToStep(1);
     });
   }
