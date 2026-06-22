@@ -1,137 +1,355 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MemeticWars - Conectar Wallet</title>
+<title>MemeticWars - Create Account</title>
 <style>
+  * { box-sizing: border-box; }
   body {
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background: #0a1f0f;
     font-family: -apple-system, sans-serif;
     color: white;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 24px 20px 40px;
   }
-  h1 { font-size: 24px; margin-bottom: 8px; text-align: center; }
-  p { color: #aaa; font-size: 14px; margin-bottom: 24px; text-align: center; max-width: 320px; }
-  button {
+  h1 { font-size: 24px; margin-bottom: 4px; text-align: center; }
+  .subtitle { color: #aaa; font-size: 13px; margin-bottom: 20px; text-align: center; }
+  .form {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .field-label {
+    font-size: 12px;
+    color: #8fd68f;
+    margin-bottom: 2px;
+    margin-left: 2px;
+  }
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  input, select {
+    width: 100%;
+    background: #16241a;
+    border: 1px solid #2d4030;
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: white;
+    font-size: 15px;
+  }
+  input:focus, select:focus { outline: none; border-color: #6c4fd6; }
+  select option { background: #16241a; }
+  .toggle-pw {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+    color: #666;
+  }
+  input[type="password"], input.pw-field { padding-right: 42px; }
+  .hint { font-size: 11px; color: #666; margin-left: 2px; }
+  .error { color: #ff6b6b; font-size: 13px; text-align: center; min-height: 16px; }
+  .status { color: #6c4fd6; font-size: 13px; text-align: center; min-height: 16px; }
+  button.primary {
     background: linear-gradient(135deg, #ab9ff2, #6c4fd6);
     color: white;
     border: none;
-    padding: 16px 32px;
+    padding: 15px;
     border-radius: 12px;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     width: 100%;
-    max-width: 320px;
+    margin-top: 6px;
   }
-  button:disabled { opacity: 0.5; }
-  .error { color: #ff6b6b; font-size: 13px; text-align: center; min-height: 18px; margin-top: 12px; }
-  .status { color: #6c4fd6; font-size: 14px; text-align: center; min-height: 18px; margin-top: 12px; }
+  button.primary:disabled { opacity: 0.5; }
+  .section-divider {
+    text-align: center;
+    color: #444;
+    font-size: 12px;
+    margin: 4px 0;
+  }
   .wallet-box {
     background: #16241a;
     border: 1px solid #2d4030;
     border-radius: 10px;
-    padding: 14px;
-    font-size: 12px;
+    padding: 12px;
+    font-size: 11px;
     color: #8fd68f;
     word-break: break-all;
     text-align: center;
-    margin-top: 16px;
-    max-width: 320px;
   }
-  .check { font-size: 48px; text-align: center; margin-bottom: 8px; }
+  .done-view {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+  }
+  .check { font-size: 52px; }
 </style>
 </head>
 <body>
 
 <h1>🪖 MemeticWars</h1>
-<p>Conecta tu wallet de Phantom para vincularla a tu cuenta</p>
+<p class="subtitle">Create your account &amp; connect your wallet</p>
 
-<div id="connect-view">
-  <button id="connect-phantom-btn">Conectar Phantom</button>
+<!-- Registration + Wallet Form -->
+<div class="form" id="main-form">
+
+  <!-- Username -->
+  <div>
+    <div class="field-label">Username</div>
+    <input type="text" id="username" placeholder="4–10 chars, letters/numbers/_" maxlength="10" autocomplete="off">
+    <div class="hint">Only letters, numbers and underscores</div>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <div class="field-label">Email</div>
+    <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+  </div>
+
+  <!-- Password -->
+  <div>
+    <div class="field-label">Password</div>
+    <div class="input-wrap">
+      <input type="password" id="password" class="pw-field" placeholder="Min. 8 characters" autocomplete="new-password">
+      <span class="toggle-pw" id="toggle-pw1">👁</span>
+    </div>
+  </div>
+
+  <!-- Confirm Password -->
+  <div>
+    <div class="field-label">Confirm Password</div>
+    <div class="input-wrap">
+      <input type="password" id="confirm-password" class="pw-field" placeholder="Repeat your password" autocomplete="new-password">
+      <span class="toggle-pw" id="toggle-pw2">👁</span>
+    </div>
+  </div>
+
+  <!-- Country -->
+  <div>
+    <div class="field-label">Country</div>
+    <select id="country">
+      <option value="">— Select your country —</option>
+      <option value="AR">Argentina</option>
+      <option value="BO">Bolivia</option>
+      <option value="BR">Brazil</option>
+      <option value="CA">Canada</option>
+      <option value="CL">Chile</option>
+      <option value="CN">China</option>
+      <option value="CO">Colombia</option>
+      <option value="CR">Costa Rica</option>
+      <option value="CU">Cuba</option>
+      <option value="DO">Dominican Republic</option>
+      <option value="EC">Ecuador</option>
+      <option value="SV">El Salvador</option>
+      <option value="GT">Guatemala</option>
+      <option value="HN">Honduras</option>
+      <option value="MX">Mexico</option>
+      <option value="NI">Nicaragua</option>
+      <option value="PA">Panama</option>
+      <option value="PY">Paraguay</option>
+      <option value="PE">Peru</option>
+      <option value="PR">Puerto Rico</option>
+      <option value="ES">Spain</option>
+      <option value="US">United States</option>
+      <option value="UY">Uruguay</option>
+      <option value="VE">Venezuela</option>
+      <option value="OTHER">Other</option>
+    </select>
+  </div>
+
+  <!-- Date of Birth -->
+  <div>
+    <div class="field-label">Date of Birth</div>
+    <input type="date" id="dob" max="">
+    <div class="hint">You must be 18 or older to play</div>
+  </div>
+
+  <div class="section-divider">— Wallet —</div>
+
+  <!-- Wallet status -->
+  <div class="wallet-box" id="wallet-box" style="display:none;"></div>
+
   <div class="error" id="error-text"></div>
   <div class="status" id="status-text"></div>
-  <div class="wallet-box" id="wallet-box" style="display:none;"></div>
+
+  <button class="primary" id="submit-btn">Create Account &amp; Connect Wallet</button>
 </div>
 
-<div id="done-view" style="display:none; text-align:center;">
+<!-- Done view -->
+<div class="done-view" id="done-view">
   <div class="check">✅</div>
-  <p style="color:#8fd68f; font-weight:bold;">¡Wallet vinculada!</p>
-  <p>Vuelve al juego e inicia sesión con tu correo.</p>
-  <button id="back-to-game-btn">← Volver a MemeticWars</button>
+  <p style="color:#8fd68f; font-weight:bold; font-size:18px; margin:0;">All set!</p>
+  <p style="color:#ccc; font-size:13px; margin:0;">Your account and wallet are linked.<br>Go back to the game and log in with your email.</p>
+  <button class="primary" id="back-btn">← Back to MemeticWars</button>
 </div>
 
 <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
   // ─────────────────────────────────────────────────────
-  //  CONFIGURACIÓN — debe coincidir con register.html
+  //  CONFIG — update NAKAMA_URL when using ngrok
   // ─────────────────────────────────────────────────────
   const NAKAMA_URL = "http://192.168.1.74:7350";
+  const NAKAMA_SERVER_KEY = "defaultkey";
 
-  // ── Leer el token de sesión y correo desde la URL ──
-  // register.html nos redirige aquí con: register-web3.html?token=XXX&email=YYY
-  const params = new URLSearchParams(window.location.search);
-  const sessionToken = params.get('token');
-  const userEmail = params.get('email') || '';
+  // ── Set max date of birth (must be 18+) ──
+  const maxDob = new Date();
+  maxDob.setFullYear(maxDob.getFullYear() - 18);
+  document.getElementById('dob').max = maxDob.toISOString().split('T')[0];
 
-  if (!sessionToken) {
-    document.getElementById('error-text').textContent =
-      'No se encontró sesión válida. Vuelve a registrarte desde el juego.';
-    document.getElementById('connect-phantom-btn').disabled = true;
-  }
+  // ── Password visibility toggles ──
+  document.getElementById('toggle-pw1').addEventListener('click', () => {
+    const inp = document.getElementById('password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+  document.getElementById('toggle-pw2').addEventListener('click', () => {
+    const inp = document.getElementById('confirm-password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
 
+  // ── Phantom provider ──
   function getProvider() {
     if ('phantom' in window) {
-      const provider = window.phantom?.solana;
-      if (provider?.isPhantom) return provider;
+      const p = window.phantom?.solana;
+      if (p?.isPhantom) return p;
     }
     return null;
   }
 
-  document.getElementById('connect-phantom-btn').addEventListener('click', async () => {
+  // ── Validate username ──
+  function isValidUsername(u) {
+    return /^[a-zA-Z0-9_]{4,10}$/.test(u);
+  }
+
+  // ── Check if wallet is already linked to another account ──
+  async function isWalletAlreadyUsed(walletAddress, token) {
+    // We store a public wallet index: collection='wallet_index', key=walletAddress
+    // readable by all (permission_read: 2) so we can check without knowing the owner
+    try {
+      const resp = await fetch(`${NAKAMA_URL}/v2/storage/wallet_index/${walletAddress}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (resp.status === 200) {
+        const data = await resp.json();
+        return data.objects && data.objects.length > 0;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  // ── Main submit handler ──
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPw = document.getElementById('confirm-password').value;
+    const country = document.getElementById('country').value;
+    const dob = document.getElementById('dob').value;
+
     const errorEl = document.getElementById('error-text');
     const statusEl = document.getElementById('status-text');
-    const btn = document.getElementById('connect-phantom-btn');
-    const walletBox = document.getElementById('wallet-box');
+    const btn = document.getElementById('submit-btn');
 
     errorEl.textContent = '';
-    const provider = getProvider();
 
-    if (!provider) {
-      // No estamos dentro de Phantom todavía: abrir esta MISMA página (con el token en la URL) dentro de Phantom
-      const currentUrl = encodeURIComponent(window.location.href);
-      const phantomDeepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
-      btn.textContent = 'Abrir en Phantom';
-      btn.onclick = () => { window.location.href = phantomDeepLink; };
-      errorEl.textContent = 'Abre esta página dentro de Phantom para continuar.';
+    // ── Validations ──
+    if (!isValidUsername(username)) {
+      errorEl.textContent = 'Username: 4–10 characters, letters/numbers/_ only';
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      errorEl.textContent = 'Please enter a valid email';
+      return;
+    }
+    if (password.length < 8) {
+      errorEl.textContent = 'Password must be at least 8 characters';
+      return;
+    }
+    if (password !== confirmPw) {
+      errorEl.textContent = 'Passwords do not match';
+      return;
+    }
+    if (!country) {
+      errorEl.textContent = 'Please select your country';
+      return;
+    }
+    if (!dob) {
+      errorEl.textContent = 'Please enter your date of birth';
       return;
     }
 
+    // ── Check if Phantom is available ──
+    const provider = getProvider();
+    if (!provider) {
+      // Not inside Phantom yet — open this same page inside Phantom
+      const currentUrl = encodeURIComponent(window.location.href);
+      const deepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+      window.location.href = deepLink;
+      return;
+    }
+
+    btn.disabled = true;
+
     try {
-      btn.disabled = true;
-      statusEl.textContent = 'Conectando con Phantom...';
+      // STEP 1: Create Nakama account
+      statusEl.textContent = 'Creating account...';
+      const basicAuth = btoa(NAKAMA_SERVER_KEY + ':');
+      const authResp = await fetch(
+        `${NAKAMA_URL}/v2/account/authenticate/email?create=true&username=${encodeURIComponent(username)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + basicAuth,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password, username })
+        }
+      );
+      const authData = await authResp.json();
+      if (!authResp.ok) {
+        throw new Error(authData.message || 'Failed to create account');
+      }
+      const sessionToken = authData.token;
 
-      const resp = await provider.connect();
-      const publicKey = resp.publicKey.toString();
+      // STEP 2: Connect Phantom wallet
+      statusEl.textContent = 'Connecting Phantom...';
+      const connectResp = await provider.connect();
+      const publicKey = connectResp.publicKey.toString();
 
-      statusEl.textContent = 'Firma el mensaje para verificar la wallet...';
+      // STEP 3: Check wallet not already used
+      statusEl.textContent = 'Verifying wallet...';
+      const alreadyUsed = await isWalletAlreadyUsed(publicKey, sessionToken);
+      if (alreadyUsed) {
+        throw new Error('This wallet is already linked to another account.');
+      }
 
-      const message = `Verificar wallet para MemeticWars\nCuenta: ${userEmail}\nFecha: ${new Date().toISOString()}`;
-      const encodedMessage = new TextEncoder().encode(message);
-
-      const signed = await provider.signMessage(encodedMessage, 'utf8');
+      // STEP 4: Sign verification message
+      statusEl.textContent = 'Sign to verify wallet ownership...';
+      const message = `Verify wallet for MemeticWars\nAccount: ${email}\nDate: ${new Date().toISOString()}`;
+      const encoded = new TextEncoder().encode(message);
+      const signed = await provider.signMessage(encoded, 'utf8');
       const signatureBase64 = btoa(String.fromCharCode(...signed.signature));
 
-      statusEl.textContent = 'Guardando...';
-
+      // STEP 5: Save wallet + profile data to Nakama Storage
+      statusEl.textContent = 'Saving your data...';
       const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
         method: 'PUT',
         headers: {
@@ -139,54 +357,70 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          objects: [{
-            collection: 'wallet',
-            key: 'solana_address',
-            value: JSON.stringify({
-              address: publicKey,
-              message: message,
-              signature: signatureBase64,
-              linked_at: Date.now()
-            }),
-            permission_read: 1,
-            permission_write: 1
-          }]
+          objects: [
+            // Private wallet data (only owner can read)
+            {
+              collection: 'wallet',
+              key: 'solana_address',
+              value: JSON.stringify({
+                address: publicKey,
+                message,
+                signature: signatureBase64,
+                linked_at: Date.now()
+              }),
+              permission_read: 1,
+              permission_write: 1
+            },
+            // Public wallet index (readable by server to prevent duplicates)
+            {
+              collection: 'wallet_index',
+              key: publicKey,
+              value: JSON.stringify({ owner_email_hash: btoa(email), linked_at: Date.now() }),
+              permission_read: 2,
+              permission_write: 1
+            },
+            // Player profile data
+            {
+              collection: 'profile',
+              key: 'data',
+              value: JSON.stringify({
+                username,
+                country,
+                dob,
+                created_at: Date.now()
+              }),
+              permission_read: 1,
+              permission_write: 1
+            }
+          ]
         })
       });
 
       if (!writeResp.ok) {
-        const errData = await writeResp.json().catch(() => ({}));
-        throw new Error(errData.message || 'No se pudo guardar la wallet. Tu sesión pudo haber expirado.');
+        throw new Error('Failed to save data. Please try again.');
       }
 
-      walletBox.style.display = 'block';
-      walletBox.textContent = '✅ ' + publicKey;
+      // Show wallet address
+      document.getElementById('wallet-box').style.display = 'block';
+      document.getElementById('wallet-box').textContent = '✅ ' + publicKey;
       statusEl.textContent = '';
-      btn.style.display = 'none';
 
+      // Show done view
       setTimeout(() => {
-        document.getElementById('connect-view').style.display = 'none';
-        document.getElementById('done-view').style.display = 'block';
-      }, 1000);
+        document.getElementById('main-form').style.display = 'none';
+        document.getElementById('done-view').style.display = 'flex';
+      }, 800);
 
     } catch (err) {
-      errorEl.textContent = err.message || 'No se pudo conectar/firmar. Intenta de nuevo.';
+      errorEl.textContent = err.message || 'Something went wrong. Please try again.';
       statusEl.textContent = '';
       btn.disabled = false;
     }
   });
 
-  document.getElementById('back-to-game-btn').addEventListener('click', () => {
+  // ── Back to game ──
+  document.getElementById('back-btn').addEventListener('click', () => {
     window.location.href = 'memeticwars://onconnect?status=ready';
-  });
-
-  // ── Auto-conectar si ya regresamos de Phantom y el provider ya está listo ──
-  window.addEventListener('load', () => {
-    const provider = getProvider();
-    if (provider?.isConnected && sessionToken) {
-      // Phantom ya está disponible al cargar (volvimos de "Abrir en Phantom") → intenta directo
-      document.getElementById('connect-phantom-btn').click();
-    }
   });
 </script>
 
