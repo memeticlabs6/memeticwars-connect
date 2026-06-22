@@ -248,7 +248,7 @@
       // Web3: redirigir a página dedicada, pasando el token en la URL
       // (así sobrevive la recarga que hace Phantom al abrir la página)
       const emailUsed = encodeURIComponent(email);
-      window.location.href = `register-web3.html?token=${encodeURIComponent(data.token)}&email=${emailUsed}`;
+      window.location.href = `register-web3.html?token=${encodeURIComponent(data.token)}&email=${emailUsed}&v=${Date.now()}`;
       return;
 
     } catch (err) {
