@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeticWars - Wallet Link</title>
+<style>
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; background: #0a1f0f;
+    font-family: -apple-system, sans-serif; color: white; padding: 20px; box-sizing: border-box;
+  }
+  .box { width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+  .error { color: #ff6b6b; font-size: 14px; }
+  .status { color: #ab9ff2; font-size: 14px; }
+  button {
+    background: linear-gradient(135deg, #ab9ff2, #6c4fd6); color: white;
+    border: none; padding: 16px; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer;
+  }
+  .check { font-size: 52px; }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>🔗 Web3 Wallet Link</h2>
+  <p id="desc-text" style="color: #aaa; font-size: 14px;">Initializing wallet connection...</p>
+  
+  <div class="status" id="status-text"></div>
+  <div class="error" id="error-text"></div>
+
+  <button id="action-btn" style="display:none;">Connect &amp; Sign Message</button>
+</div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>
+  const NAKAMA_URL = "http://192.168.1.74:7350";
+
+  // Extraer parámetros de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionToken = urlParams.get('token');
+  const email = urlParams.get('email');
+  const username = urlParams.get('username');
+
+  function getProvider() {
+    if ('phantom' in window) {
+      const p = window.phantom?.solana;
+      if (p?.isPhantom) return p;
+    }
+    return null;
+  }
+
+  async function isWalletAlreadyUsed(walletAddress) {
+    try {
+      const resp = await fetch(`${NAKAMA_URL}/v2/storage/wallet_index/${walletAddress}`, {
+        headers: { 'Authorization': 'Bearer ' + sessionToken }
+      });
+      if (resp.status === 200) {
+        const data = await resp.json();
+        return data.objects && data.objects.length > 0;
+      }
+      return false;
+    } catch { return false; }
+  }
+
+  async function executeWeb3Flow() {
+    const provider = getProvider();
+    const descEl = document.getElementById('desc-text');
+    const statusEl = document.getElementById('status-text');
+    const errorEl = document.getElementById('error-text');
+    const btn = document.getElementById('action-btn');
+
+    if (!provider) {
+      // SI NO HAY PROVIDER (Móvil normal): Lanzar Deep Link inmediatamente hacia este mismo archivo
+      descEl.textContent = "Redirecting to Phantom Secure Browser...";
+      const currentUrl = window.location.href;
+      const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=${encodeURIComponent(currentUrl)}`;
+      window.location.href = deepLink;
+      return;
+    }
+
+    // SI HAY PROVIDER (PC o dentro del navegador de Phantom): Mostrar interfaz lista para firmar
+    descEl.textContent = "Please secure your wallet connection below.";
+    btn.style.display = "block";
+
+    btn.onclick = async () => {
+      errorEl.textContent = '';
+      btn.disabled = true;
+      try {
+        statusEl.textContent = 'Connecting Wallet...';
+        const connectResp = await provider.connect();
+        const publicKey = connectResp.publicKey.toString();
+
+        statusEl.textContent = 'Verifying security index...';
+        const alreadyUsed = await isWalletAlreadyUsed(publicKey);
+        if (alreadyUsed) { throw new Error('This wallet is already linked to another account.'); }
+
+        statusEl.textContent = 'Awaiting signature...';
+        const message = `Verify wallet for MemeticWars\nAccount: ${email}\nTimestamp: ${Date.now()}`;
+        const encodedMessage = new TextEncoder().encode(message);
+        const signedResult = await provider.signMessage(encodedMessage, 'utf8');
+        const signatureBase64 = btoa(String.fromCharCode(...signedResult.signature));
+
+        statusEl.textContent = 'Saving cryptographic binding...';
+        const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + sessionToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            objects: [
+              { collection: 'wallet', key: 'solana_address', value: JSON.stringify({ address: publicKey, message, signature: signatureBase64 }), permission_read: 1, permission_write: 1 },
+              { collection: 'wallet_index', key: publicKey, value: JSON.stringify({ owner: btoa(email) }), permission_read: 2, permission_write: 1 }
+            ]
+          })
+        });
+
+        if (!writeResp.ok) throw new Error('Failed to save wallet link.');
+
+        // Vista de éxito final
+        document.body.innerHTML = `
+          <div class="box">
+            <div class="check">✅</div>
+            <h3 style="color:#8fd68f; margin:0;">Identity Linked!</h3>
+            <p style="color:#ccc; font-size:13px;">Your wallet and account are permanently associated.</p>
+            <button onclick="window.location.href='memeticwars://onconnect?status=ready'">← Return to Game</button>
+          </div>`;
+
+      } catch (err) {
+        errorEl.textContent = err.message || 'Transaction failed.';
+        statusEl.textContent = '';
+        btn.disabled = false;
+      }
+    };
+  }
+
+  // Ejecución automática al cargar la página
+  window.onload = executeWeb3Flow;
+</script>
+</body>
+</html>
