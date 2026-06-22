@@ -370,19 +370,24 @@
       return;
     }
 
-    // WEB3 ROUTE: Validate provider before execution
+   // WEB3 ROUTE: Validate provider before execution
     let provider = null;
     if (isWeb3Mode) {
       provider = getProvider();
       if (!provider) {
-        // CORREGIDO: Estructura oficial Deep Link de Phantom para abrir el In-App Browser nativo
-        const currentUrl = encodeURIComponent(window.location.href);
-        const deepLink = `https://phantom.app/ul/v1/browse?url=${currentUrl}&ref=${currentUrl}`;
+        // ENLACE CORREGIDO: Estructura exacta para forzar el navegador interno de Phantom móvil
+        const currentUrl = window.location.href; // Captura la URL exacta (ej: tu enlace de GitHub Pages)
+        const cleanUrl = currentUrl.split('?')[0]; // Limpia parámetros viejos para evitar bucles
+        const encodedUrl = encodeURIComponent(cleanUrl);
+        
+        // Formato oficial de redirección universal Phantom In-App Browser
+        const deepLink = `https://phantom.app/ul/v1/browse?url=${encodedUrl}&ref=${encodedUrl}`;
+        
+        // Redirige inmediatamente abriendo la app nativa en el navegador Web3
         window.location.href = deepLink;
         return;
       }
     }
-
     btn.disabled = true;
 
     try {
