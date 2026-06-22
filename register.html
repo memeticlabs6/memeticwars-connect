@@ -169,7 +169,7 @@
     goToStep(1);
   });
 
-  // Flujo Web3: Aquí es donde se hace la diferenciación crítica
+// Flujo Web3: Diferenciación crítica para móviles
   document.getElementById('choice-web3').addEventListener('click', () => {
     isWeb3Mode = true;
     document.getElementById('register-btn').textContent = "Connect & Register";
@@ -177,19 +177,24 @@
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const hasPhantom = getProvider();
 
-    // Si está en móvil pero NO está dentro del navegador de la billetera Phantom...
+    // Si está en móvil pero NO está dentro de Phantom...
     if (isMobile && !hasPhantom) {
       document.getElementById('step0-error').textContent = "Opening Phantom Wallet...";
       
-      const currentUrl = window.location.href;
-      // Usamos el formato de Deep Link nativo directo de Phantom
-      const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=${encodeURIComponent(currentUrl)}`;
+      // ESCRIBIMOS LA URL LIMPIA Y FIJA (Igual a como lo hacías en tu código separado)
+      const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html";
       
+      // Construimos el Deep Link exacto usando tu estructura original
+      const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(targetUrl)}?ref=${encodeURIComponent("https://memeticlabs6.github.io")}`;
+      
+      // Ejecutamos el salto directo
       window.location.href = phantomDeepLink;
       return;
     }
 
     // Si está en PC o ya está dentro de la app de Phantom, avanza al formulario
+    goToStep(1);
+  });C o ya está dentro de la app de Phantom, avanza al formulario
     goToStep(1);
   });
 
