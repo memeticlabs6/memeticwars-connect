@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MemeticWars - Register</title>
+<title>MemeticWars - Registration Hub</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -35,8 +35,9 @@
   .choice-card {
     background: #16241a; border: 2px solid #2d4030; border-radius: 14px;
     padding: 20px; cursor: pointer; text-align: center; margin-bottom: 12px;
+    transition: transform 0.2s;
   }
-  .choice-card:active { border-color: #6c4fd6; }
+  .choice-card:active { transform: scale(0.98); border-color: #6c4fd6; }
   .choice-icon { font-size: 32px; margin-bottom: 8px; }
   .choice-title { font-size: 17px; font-weight: bold; margin-bottom: 4px; }
   .choice-desc { font-size: 12px; color: #999; }
@@ -45,31 +46,10 @@
 </head>
 <body>
 
-<script>
-  // ──────────────────────────────────────────────────────────────────────────
-  // 1. DETECCIÓN Y REDIRECCIÓN INMEDIATA PARA MÓVILES (Antes de renderizar nada)
-  // ──────────────────────────────────────────────────────────────────────────
-  
-  // Detectamos de forma estricta si es un dispositivo móvil (iOS / Android / móviles genéricos)
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  // Detectamos si el proveedor de Phantom ya está inyectado en el navegador actual
-  const hasPhantomProvider = ('phantom' in window && window.phantom?.solana?.isPhantom);
-
-  // Si es un celular, pero NO está navegando desde dentro de la app de Phantom...
-  if (isMobile && !hasPhantomProvider) {
-    const currentUrl = window.location.href;
-    // Forzamos el salto inmediato usando el formato nativo para abrir el navegador interno de la wallet
-    const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=${encodeURIComponent(currentUrl)}`;
-    
-    window.location.href = phantomDeepLink;
-  }
-</script>
-
 <h1>🪖 MemeticWars</h1>
 <p class="subtitle">Create your account</p>
 
-<!-- STEP 0: Choice Web2 vs Web3 (Solo se ve en PC o dentro de Phantom Móvil) -->
+<!-- STEP 0: Choice Web2 vs Web3 -->
 <div class="step active" id="step0">
   <p style="text-align:center; color:#ccc; font-size:14px; margin-bottom:14px;">How do you want to play?</p>
   <div class="choice-card" id="choice-free">
@@ -82,6 +62,7 @@
     <div class="choice-title">Web3 Account</div>
     <div class="choice-desc">Connect Phantom Wallet to use your exclusive digital game assets.</div>
   </div>
+  <div class="error" id="step0-error"></div>
 </div>
 
 <!-- STEP 1: Unified Registration Form -->
@@ -128,11 +109,12 @@
   </div>
 
   <button id="register-btn">Complete Registration</button>
+  <button id="back-step0-btn" style="background:transparent; color:#aaa; margin-top:8px; font-size:14px; padding:8px;">← Change account type</button>
   <div class="error" id="error-text"></div>
   <div class="status" id="status-text"></div>
 </div>
 
-<!-- STEP 2: Done View -->
+<!-- STEP 2: Success View -->
 <div class="step" id="step2">
   <div class="check">✅</div>
   <p id="success-title" style="text-align:center; color:#8fd68f; font-size:16px; font-weight:bold;"></p>
@@ -142,17 +124,17 @@
 
 <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
-  const NAKAMA_URL = "http://192.168.1.74:7350"; // Recuerda usar https://tunel.ngrok-free.app en pruebas full
+  const NAKAMA_URL = "http://192.168.1.74:7350"; 
   const NAKAMA_SERVER_KEY = "defaultkey";
 
   let isWeb3Mode = false;
 
-  // Bloquear menores de 18 años
+  // Forzar edad mínima de 18 años en el calendario
   const maxDob = new Date();
   maxDob.setFullYear(maxDob.getFullYear() - 18);
   document.getElementById('dob').max = maxDob.toISOString().split('T')[0];
 
-  // Ocultar/Mostrar contraseñas
+  // Control de visibilidad de contraseña
   document.getElementById('toggle-pw1').addEventListener('click', () => {
     const inp = document.getElementById('password'); inp.type = inp.type === 'password' ? 'text' : 'password';
   });
@@ -165,11 +147,9 @@
     document.getElementById('step' + stepNumber).classList.add('active');
   }
 
-  // Selección de flujo
-  document.getElementById('choice-free').addEventListener('click', () => { isWeb3Mode = false; goToStep(1); });
-  document.getElementById('choice-web3').addEventListener('click', () => { isWeb3Mode = true; goToStep(1); });
+  document.getElementById('back-step0-btn').addEventListener('click', () => { goToStep(0); });
 
-  // Helper para interactuar con Phantom
+  // Helper de Wallet
   function getProvider() {
     if ('phantom' in window) {
       const provider = window.phantom?.solana;
@@ -178,7 +158,41 @@
     return null;
   }
 
-  // Verificar duplicados de Wallet
+  // ──────────────────────────────────────────────────────────────────────────
+  // CONFIGURACIÓN DE LOS BOTONES DE SELECCIÓN (PÁGINA 0)
+  // ──────────────────────────────────────────────────────────────────────────
+  
+  // Flujo Estándar (Web2): Entra directo al formulario sin importar el dispositivo
+  document.getElementById('choice-free').addEventListener('click', () => {
+    isWeb3Mode = false;
+    document.getElementById('register-btn').textContent = "Complete Registration";
+    goToStep(1);
+  });
+
+  // Flujo Web3: Aquí es donde se hace la diferenciación crítica
+  document.getElementById('choice-web3').addEventListener('click', () => {
+    isWeb3Mode = true;
+    document.getElementById('register-btn').textContent = "Connect & Register";
+
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasPhantom = getProvider();
+
+    // Si está en móvil pero NO está dentro del navegador de la billetera Phantom...
+    if (isMobile && !hasPhantom) {
+      document.getElementById('step0-error').textContent = "Opening Phantom Wallet...";
+      
+      const currentUrl = window.location.href;
+      // Usamos el formato de Deep Link nativo directo de Phantom
+      const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=${encodeURIComponent(currentUrl)}`;
+      
+      window.location.href = phantomDeepLink;
+      return;
+    }
+
+    // Si está en PC o ya está dentro de la app de Phantom, avanza al formulario
+    goToStep(1);
+  });
+
   async function isWalletAlreadyUsed(walletAddress, token) {
     try {
       const resp = await fetch(`${NAKAMA_URL}/v2/storage/wallet_index/${walletAddress}`, {
@@ -192,7 +206,9 @@
     } catch { return false; }
   }
 
-  // Procesar el registro final
+  // ──────────────────────────────────────────────────────────────────────────
+  // PROCESAMIENTO DEL FORMULARIO DE REGISTRO
+  // ──────────────────────────────────────────────────────────────────────────
   document.getElementById('register-btn').addEventListener('click', async () => {
     const username = document.getElementById('username').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -218,16 +234,16 @@
     if (isWeb3Mode) {
       provider = getProvider();
       if (!provider) {
-        errorEl.textContent = 'Phantom Wallet extension not found. Please use a Web3 browser.';
+        errorEl.textContent = 'Phantom Wallet connection required for this mode.';
         return;
       }
     }
 
     btn.disabled = true;
-    statusEl.textContent = 'Creating account in progress...';
+    statusEl.textContent = 'Processing registration...';
 
     try {
-      // 1. Registrar e iniciar sesión en Nakama
+      // 1. Ejecutar registro y login en Nakama
       const basicAuth = btoa(NAKAMA_SERVER_KEY + ':');
       const resp = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true&username=${encodeURIComponent(username)}`, {
         method: 'POST',
@@ -239,7 +255,7 @@
       if (!resp.ok) throw new Error(data.message || 'Registration failed.');
       const token = data.token;
 
-      // 2. Guardar metadata del perfil
+      // 2. Guardar el perfil en Nakama Storage
       await fetch(`${NAKAMA_URL}/v2/storage`, {
         method: 'PUT',
         headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -248,13 +264,13 @@
         })
       });
 
-      // 3. Si eligió Web3, pedir la firma de forma inmediata e inline
+      // 3. Ejecutar firma criptográfica solo si es modo Web3
       if (isWeb3Mode) {
         statusEl.textContent = 'Connecting Wallet...';
         const connectResp = await provider.connect();
         const publicKey = connectResp.publicKey.toString();
 
-        statusEl.textContent = 'Verifying security index...';
+        statusEl.textContent = 'Checking safety records...';
         const alreadyUsed = await isWalletAlreadyUsed(publicKey, token);
         if (alreadyUsed) throw new Error('This wallet is already linked to another account.');
 
@@ -264,7 +280,7 @@
         const signedResult = await provider.signMessage(encodedMessage, 'utf8');
         const signatureBase64 = btoa(String.fromCharCode(...signedResult.signature));
 
-        statusEl.textContent = 'Binding cryptographic data...';
+        statusEl.textContent = 'Linking cryptographic credentials...';
         const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
           method: 'PUT',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -276,21 +292,21 @@
           })
         });
 
-        if (!writeResp.ok) throw new Error('Failed to save cryptographic bond.');
+        if (!writeResp.ok) throw new Error('Failed to bind your digital wallet.');
       }
 
-      // 4. Mostrar pantalla de éxito configurada según el flujo
+      // 4. Mostrar pantalla de éxito según corresponda
       document.getElementById('success-title').textContent = isWeb3Mode ? "Web3 Identity Linked!" : "Account Created!";
       document.getElementById('success-desc').textContent = isWeb3Mode 
         ? "Your wallet and secure credentials are now permanently tied to your profile."
-        : "Your account is ready. Return to the game client and log in.";
+        : "Your standard profile is ready. Go back to the game to play.";
       
       statusEl.textContent = '';
       btn.disabled = false;
       goToStep(2);
 
     } catch (err) {
-      errorEl.textContent = err.message || 'An unexpected connection error occurred.';
+      errorEl.textContent = err.message || 'An error occurred during verification.';
       statusEl.textContent = '';
       btn.disabled = false;
     }
