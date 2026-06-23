@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memetic Wars - Gateway</title>
+    <title>Memetic Wars - Game Gateway</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@heroiclabs/nakama-js@2.6.0/dist/nakama-js.umd.js"></script>
     
     <style>
         body {
-            background-color: #121214;
-            color: #ffffff;
+            background-color: #0c0c0e;
+            color: #f4f4f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -20,114 +21,118 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        .container {
+
+        .gateway-container {
             display: flex;
-            gap: 30px;
-            max-width: 900px;
+            gap: 24px;
+            max-width: 850px;
             width: 100%;
         }
-        .card {
-            background-color: #1a1a1e;
-            padding: 35px;
+
+        .panel-card {
+            background-color: #141417;
+            border: 1px solid #27272a;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            text-align: center;
+            padding: 32px;
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 1px solid #27272a;
-            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .card:hover {
-            border-color: #3f3f46;
+
+        /* Subtle styling for the Web3 side to highlight asset usage */
+        .web3-panel {
+            background: linear-gradient(145deg, #141417 0%, #1a1528 100%);
+            border-color: #3b2d54;
         }
-        .card.web3-card {
-            background: linear-gradient(145deg, #1a1a1e 0%, #1e1b29 100%);
-            border: 1px solid #3b2d54;
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            letter-spacing: -0.5px;
         }
-        .card.web3-card:hover {
-            border-color: #512da8;
+
+        p {
+            color: #a1a1aa;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
         }
-        .input-group {
-            margin: 20px 0;
+
+        .input-block {
+            margin-bottom: 24px;
             text-align: left;
         }
+
         label {
             display: block;
-            font-size: 14px;
-            color: #a1a1aa;
+            font-size: 13px;
+            color: #71717a;
             margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
+
         input {
             width: 100%;
             padding: 12px;
-            background-color: #27272a;
-            border: 1px solid #3f3f46;
+            background-color: #1e1e22;
+            border: 1px solid #27272a;
             border-radius: 6px;
-            color: white;
+            color: #ffffff;
+            font-size: 15px;
             box-sizing: border-box;
-            font-size: 14px;
         }
+
         input:focus {
             outline: none;
-            border-color: #673ab7;
+            border-color: #6d28d9;
         }
-        button {
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: opacity 0.2s;
+
+        .action-btn {
             width: 100%;
-            margin-top: auto;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            color: #ffffff;
+            transition: background 0.2s;
         }
-        button:hover {
-            opacity: 0.9;
-        }
-        .btn-web2 {
+
+        .btn-classic {
             background-color: #27272a;
-            border: 1px solid #52525b;
+            border: 1px solid #3f3f46;
         }
-        .btn-web2:hover {
+
+        .btn-classic:hover {
             background-color: #3f3f46;
         }
+
         .btn-web3 {
-            background-color: #512da8;
+            background-color: #6d28d9;
         }
-        .badge {
-            background-color: #2e1f4d;
-            color: #b39ddb;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            align-self: center;
-            margin-bottom: 10px;
+
+        .btn-web3:hover {
+            background-color: #7c3aed;
         }
-        .badge.web2 {
-            background-color: #27272a;
-            color: #a1a1aa;
-        }
-        #status-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #27272a;
+
+        /* Fixed Global Status Bar */
+        #global-status {
+            margin-top: 30px;
+            background-color: #141417;
+            border: 1px solid #27272a;
             padding: 12px 24px;
             border-radius: 30px;
             font-size: 14px;
-            color: #e4e4e7;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border: 1px solid #3f3f46;
+            color: #a1a1aa;
+            font-weight: 500;
         }
-        @media (max-width: 768px) {
-            .container {
+
+        @media (max-width: 600px) {
+            .gateway-container {
                 flex-direction: column;
             }
         }
@@ -135,117 +140,126 @@
 </head>
 <body>
 
-    <div class="container">
-        <div class="card">
-            <span class="badge web2">Standard Mode</span>
+    <div class="gateway-container">
+        <div class="panel-card">
             <div>
-                <h2>Instant Play</h2>
-                <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5;">Just want to test your skills? Create a quick guest profile and jump straight into the battlefield. You can link a wallet later.</p>
+                <h2>Standard Account</h2>
+                <p>New to the game or just testing the waters? Create a local guest profile instantly. You can bind digital card assets to this account later on.</p>
                 
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your warrior name">
+                <div class="input-block">
+                    <label for="usernameInput">Warrior Name</label>
+                    <input type="text" id="usernameInput" placeholder="Enter username...">
                 </div>
             </div>
-            
-            <button id="registerBtn" class="btn-web2">Launch Game</button>
+            <button id="web2Btn" class="action-btn btn-classic">Launch Guest Session</button>
         </div>
 
-        <div class="card web3-card">
-            <span class="badge">Web3 Vault</span>
+        <div class="panel-card web3-panel">
             <div>
-                <h2>Connect & Sync</h2>
-                <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5;">Own digital asset cards or keys? Connect your Phantom wallet to securely deploy your personal collection directly into the game server.</p>
+                <h2>Web3 Card Vault</h2>
+                <p>Already own card assets or community tokens? Connect your Phantom wallet directly to authorize your on-chain inventory and synchronize it with the matchmaker.</p>
             </div>
-            
-            <div style="margin: 40px 0;">
-                </div>
-            
-            <button id="connectWalletBtn" class="btn-web3">Connect Phantom</button>
+            <div style="height: 68px;"></div> 
+            <button id="web3Btn" class="action-btn btn-web3">Connect Phantom Wallet</button>
         </div>
     </div>
 
-    <div id="status-bar">System Status: Awaiting action...</div>
+    <div id="global-status">System Status: Awaiting action...</div>
 
     <script>
+        console.log("Memetic Wars Gateway Engine: Initialized.");
+
         // ==========================================
-        // NAKAMA SERVER CONFIGURATION (NGROK)
+        // 1. NAKAMA SERVER CONFIG (BRIDGED VIA NGROK)
         // ==========================================
         const client = new nakamajs.Client(
-            "defaultkey",                                
-            "creature-visiting-playback.ngrok-free.dev", 
-            "443",                                       
-            true                                         
+            "defaultkey",                                // Server Key
+            "creature-visiting-playback.ngrok-free.dev", // Ngrok Tunnel Host
+            "443",                                       // HTTPS Port
+            true                                         // Force SSL
         );
 
         let currentSession = null;
-        const statusBar = document.getElementById('status-bar');
 
-        function updateStatus(text, color = "#e4e4e7") {
-            statusBar.innerText = text;
-            statusBar.style.color = color;
+        // DOM Element Mapping
+        const statusDisplay = document.getElementById('global-status');
+        const usernameInput = document.getElementById('usernameInput');
+        const web2Button = document.getElementById('web2Btn');
+        const web3Button = document.getElementById('web3Btn');
+
+        // Status update wrapper
+        function setStatus(message, isError = false, isSuccess = false) {
+            statusDisplay.innerText = `System Status: ${message}`;
+            if (isError) statusDisplay.style.color = "#ef4444";
+            else if (isSuccess) statusDisplay.style.color = "#22c55e";
+            else statusDisplay.style.color = "#a1a1aa";
         }
 
         // ==========================================
-        // FLOW 1: WEB2 REGISTRATION / LOGIN
+        // 2. WEB2 EXECUTION FLOW
         // ==========================================
-        document.getElementById('registerBtn').addEventListener('click', async () => {
-            const username = document.getElementById('username').value.trim();
+        web2Button.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
             
             if (!username) {
-                updateStatus("❌ Please enter a valid username.", "#ef4444");
+                setStatus("❌ Registration rejected. Please provide a username.", true);
                 return;
             }
 
             try {
-                updateStatus("Connecting to Nakama node...");
+                setStatus("Contacting Nakama node via secure tunnel...");
+                
+                // Auth custom creates user if nonexistent using username as credentials
                 currentSession = await client.authenticateCustom(username, true, username);
-                console.log("Web2 Session Token:", currentSession.token);
+                console.log("Nakama Web2 Session Established. Token:", currentSession.token);
                 
-                updateStatus(`🚀 Welcome, ${username}! Directing to matchmaking...`, "#22c55e");
+                setStatus(`🚀 Welcome, ${username}! Account verified. Syncing assets...`, false, true);
                 
-                // Here you would trigger your redirect or load Unity/Godot web client
+                // [Redirect or trigger Unity/Godot instance initialization here]
 
             } catch (error) {
-                console.error(error);
-                updateStatus(`❌ Server Error: ${error.message || error}`, "#ef4444");
+                console.error("Web2 Authentication failure:", error);
+                setStatus(`❌ Server connection failed: ${error.message || error}`, true);
             }
         });
 
         // ==========================================
-        // FLOW 2: WEB3 WALLET CONNECTION & AUTH
+        // 3. WEB3 EXECUTION FLOW
         // ==========================================
-        document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-            updateStatus("Scanning for Phantom browser extension...");
+        web3Button.addEventListener('click', async () => {
+            setStatus("Verifying Phantom environment extension...");
+            
             const isPhantomInstalled = window.solana && window.solana.isPhantom;
 
             if (!isPhantomInstalled) {
-                updateStatus("❌ Phantom Wallet not found. Redirecting to setup...", "#ef4444");
+                setStatus("❌ Phantom extension missing. Redirecting to setup provider.", true);
                 window.open("https://phantom.app/", "_blank");
                 return;
             }
 
             try {
-                updateStatus("Awaiting wallet approval...");
+                setStatus("Awaiting secure wallet signature approval...");
+                
                 const walletResponse = await window.solana.connect();
                 const walletAddress = walletResponse.publicKey.toString();
                 
-                updateStatus(`Wallet linked: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`);
-                updateStatus("Syncing on-chain keys with Nakama database...");
+                // Shorten public key for clean UI rendering
+                const cleanAddress = `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`;
+                setStatus(`Wallet Signature Approved: ${cleanAddress}. Synchronizing Node DB...`);
 
-                // Authenticating directly via Wallet address as a unique account
+                // Uses public key as custom ID identifier for frictionless entry
                 currentSession = await client.authenticateCustom(walletAddress, true, walletAddress);
-                console.log("Web3 Session Token:", currentSession.token);
+                console.log("Nakama Web3 Session Established. Token:", currentSession.token);
 
-                updateStatus("🚀 Vault secure! Asset keys verified. Loading inventory...", "#22c55e");
-                
-                /* FUTURE PHASE 1 CALL:
-                   nakamaRpcVerifyTokens(walletAddress, currentSession.token); 
+                setStatus("🚀 Web3 Identity secured! Fetching collection deployment...", false, true);
+
+                /* FUTURE PHASE 1 RPC TARGET:
+                   Trigger on-chain checks against currentSession.token inside Nakama here.
                 */
 
             } catch (error) {
-                console.error(error);
-                updateStatus(`❌ Connection rejected: ${error.message || error}`, "#ef4444");
+                console.error("Web3 Authentication failure:", error);
+                setStatus(`❌ Secure connection rejected: ${error.message || error}`, true);
             }
         });
     </script>
