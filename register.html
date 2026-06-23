@@ -49,23 +49,24 @@
 <h1>🪖 MemeticWars</h1>
 <p class="subtitle">Create your account</p>
 
-<!-- STEP 0: Choice Web2 vs Web3 -->
 <div class="step active" id="step0">
   <p style="text-align:center; color:#ccc; font-size:14px; margin-bottom:14px;">How do you want to play?</p>
+  
   <div class="choice-card" id="choice-free">
     <div class="choice-icon">🎮</div>
     <div class="choice-title">Standard Account</div>
     <div class="choice-desc">Start playing immediately with standard credentials. No wallet required.</div>
   </div>
-  <div class="choice-card" id="choice-web3">
+
+  <a href="#" id="choice-web3" class="choice-card" style="text-decoration: none; color: inherit; display: block;">
     <div class="choice-icon">🔗</div>
     <div class="choice-title">Web3 Account</div>
     <div class="choice-desc">Connect Phantom Wallet to use your exclusive digital game assets.</div>
-  </div>
+  </a>
+  
   <div class="error" id="step0-error"></div>
 </div>
 
-<!-- STEP 1: Unified Registration Form -->
 <div class="step" id="step1">
   <div>
     <div class="field-label">Username</div>
@@ -114,7 +115,6 @@
   <div class="status" id="status-text"></div>
 </div>
 
-<!-- STEP 2: Success View -->
 <div class="step" id="step2">
   <div class="check">✅</div>
   <p id="success-title" style="text-align:center; color:#8fd68f; font-size:16px; font-weight:bold;"></p>
@@ -122,46 +122,14 @@
   <button onclick="window.location.href='memeticwars://onconnect?status=ready'">← Return to Game</button>
 </div>
 
-<!-- Cargamos la librería de Solana al principio del bloque de ejecución para evitar fallos de inicialización -->
 <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
   const NAKAMA_URL = "http://192.168.1.74:7350"; 
- // Si viene de Phantom con ?web3=1, ir directo al formulario Web3
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('web3') === '1') {
-    isWeb3Mode = true;
-    const regBtn = document.getElementById('register-btn');
-    if (regBtn) regBtn.textContent = "Connect & Register";
-    goToStep(1);
-  }
   const NAKAMA_SERVER_KEY = "defaultkey";
 
   let isWeb3Mode = false;
 
-  // Bloquear menores de 18 años
-  const dobInput = document.getElementById('dob');
-  if (dobInput) {
-    const maxDob = new Date();
-    maxDob.setFullYear(maxDob.getFullYear() - 18);
-    dobInput.max = maxDob.toISOString().split('T')[0];
-  }
-
-  // Controladores de contraseñas (con verificación para asegurar que existan en el DOM)
-  const t1 = document.getElementById('toggle-pw1');
-  const t2 = document.getElementById('toggle-pw2');
-  if (t1) t1.addEventListener('click', () => { const i = document.getElementById('password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
-  if (t2) t2.addEventListener('click', () => { const i = document.getElementById('confirm-password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
-
-  function goToStep(stepNumber) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById('step' + stepNumber);
-    if (target) target.classList.add('active');
-  }
-
-  const backBtn = document.getElementById('back-step0-btn');
-  if (backBtn) backBtn.addEventListener('click', () => { goToStep(0); });
-
-  // Comprobación segura de la existencia de Phantom
+  // Comprobación de billetera integrada
   function hasPhantomWallet() {
     return (window.phantom?.solana?.isPhantom || ('solana' in window && window.solana?.isPhantom));
   }
@@ -178,51 +146,67 @@
     return null;
   }
 
+  function goToStep(stepNumber) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('step' + stepNumber);
+    if (target) target.classList.add('active');
+  }
+
   // ──────────────────────────────────────────────────────────────────────────
-  // COMPORTAMIENTO DE LOS BOTONES DE SELECCIÓN (PÁGINA 0)
+  // CONFIGURACIÓN ASÍNCRONA INICIAL (APENAS CARGA EL DOM)
   // ──────────────────────────────────────────────────────────────────────────
-  
+  document.addEventListener("DOMContentLoaded", () => {
+    // Configurar edad mínima (18 años)
+    const dobInput = document.getElementById('dob');
+    if (dobInput) {
+      const maxDob = new Date();
+      maxDob.setFullYear(maxDob.getFullYear() - 18);
+      dobInput.max = maxDob.toISOString().split('T')[0];
+    }
+
+    // Botón de regreso
+    const backBtn = document.getElementById('back-step0-btn');
+    if (backBtn) backBtn.addEventListener('click', () => { goToStep(0); });
+
+    // Detectar entorno móvil y presencia de wallet injectada
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasWallet = hasPhantomWallet();
+    
+    const choiceWeb3 = document.getElementById('choice-web3');
+
+    if (choiceWeb3) {
+      if (isMobile && !hasWallet) {
+        // MÓVIL FUERA DE PHANTOM: Le inyectamos el protocolo nativo directo al href HTML
+        const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html";
+        const nativeDeepLink = "phantom://browse/" + encodeURIComponent(targetUrl) + "?ref=" + encodeURIComponent("https://memeticlabs6.github.io");
+        
+        choiceWeb3.href = nativeDeepLink;
+      } else {
+        // PC O MÓVIL DENTRO DE PHANTOM: Comportamiento JS normal de navegación por pasos
+        choiceWeb3.addEventListener('click', (e) => {
+          e.preventDefault(); // Evitamos que intente navegar al '#'
+          isWeb3Mode = true;
+          const regBtn = document.getElementById('register-btn');
+          if (regBtn) regBtn.textContent = "Connect & Register";
+          goToStep(1);
+        });
+      }
+    }
+  });
+
+  // Mostrar / Ocultar contraseñas
+  const t1 = document.getElementById('toggle-pw1');
+  const t2 = document.getElementById('toggle-pw2');
+  if (t1) t1.addEventListener('click', () => { const i = document.getElementById('password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
+  if (t2) t2.addEventListener('click', () => { const i = document.getElementById('confirm-password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
+
+  // Flujo Estándar Web2
   const choiceFree = document.getElementById('choice-free');
   if (choiceFree) {
     choiceFree.addEventListener('click', () => {
       isWeb3Mode = false;
       const regBtn = document.getElementById('register-btn');
       if (regBtn) regBtn.textContent = "Complete Registration";
-      goToStep(1);
-    });
-  }
-
-  const choiceWeb3 = document.getElementById('choice-web3');
-  if (choiceWeb3) {
-    choiceWeb3.addEventListener('click', () => {
-      isWeb3Mode = true;
-      const regBtn = document.getElementById('register-btn');
-      if (regBtn) regBtn.textContent = "Connect & Register";
-
-      // Detectamos si es móvil
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const hasWallet = hasPhantomWallet();
-
-      // SI ES MÓVIL Y NO ESTÁ EN PHANTOM:
-      if (isMobile && !hasWallet) {
-        const statusErr = document.getElementById('step0-error');
-        if (statusErr) statusErr.textContent = "Opening Phantom Wallet...";
-        
-        const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html?web3=1";
-        const phantomDeepLink = "https://phantom.app/ul/browse/" + encodeURIComponent(targetUrl) + "?ref=" + encodeURIComponent("https://memeticlabs6.github.io");
-        
-        // 🚀 EL TRUCO: Crear un enlace invisible y simular un clic nativo para evitar el bloqueo del SO
-        const hiddenLink = document.createElement('a');
-        hiddenLink.href = phantomDeepLink;
-        hiddenLink.target = "_blank"; // A veces necesario en iOS para forzar la apertura de app
-        document.body.appendChild(hiddenLink);
-        hiddenLink.click();
-        document.body.removeChild(hiddenLink);
-        
-        return;
-      }
-
-      // Si es PC o ya está en Phantom, abre el formulario
       goToStep(1);
     });
   }
@@ -241,7 +225,7 @@
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // PROCESAMIENTO GENERAL DEL FORMULARIO
+  // SUBMIT Y PROCESAMIENTO DEL FORMULARIO (NAKAMA + SOLANA)
   // ──────────────────────────────────────────────────────────────────────────
   const regBtn = document.getElementById('register-btn');
   if (regBtn) {
@@ -278,7 +262,7 @@
       if (statusEl) statusEl.textContent = 'Processing registration...';
 
       try {
-        // 1. Nakama Authenticate
+        // 1. Crear cuenta/Autenticar en Nakama
         const basicAuth = btoa(NAKAMA_SERVER_KEY + ':');
         const resp = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true&username=${encodeURIComponent(username)}`, {
           method: 'POST',
@@ -290,7 +274,7 @@
         if (!resp.ok) throw new Error(data.message || 'Registration failed.');
         const token = data.token;
 
-        // 2. Nakama Storage - Guardar perfil común
+        // 2. Guardar metadata del perfil en el Storage de Nakama
         await fetch(`${NAKAMA_URL}/v2/storage`, {
           method: 'PUT',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -299,7 +283,7 @@
           })
         });
 
-        // 3. Autenticación Criptográfica (Solo modo Web3)
+        // 3. Flujo Criptográfico Completo (Solo si es Web3)
         if (isWeb3Mode && provider) {
           if (statusEl) statusEl.textContent = 'Connecting Wallet...';
           const connectResp = await provider.connect();
@@ -330,7 +314,7 @@
           if (!writeResp.ok) throw new Error('Failed to bind your digital wallet.');
         }
 
-        // 4. Concluir con éxito
+        // 4. Renderizar Éxito
         const succTitle = document.getElementById('success-title');
         const succDesc = document.getElementById('success-desc');
         
