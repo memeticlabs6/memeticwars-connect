@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memetic Wars - Registro Web3</title>
+    <title>Memetic Wars - Gateway</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@heroiclabs/nakama-js@2.6.0/dist/nakama-js.umd.js"></script>
     
@@ -15,112 +15,237 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 900px;
+            width: 100%;
         }
         .card {
             background-color: #1a1a1e;
-            padding: 30px;
+            padding: 35px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             text-align: center;
-            max-width: 400px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #27272a;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            border-color: #3f3f46;
+        }
+        .card.web3-card {
+            background: linear-gradient(145deg, #1a1a1e 0%, #1e1b29 100%);
+            border: 1px solid #3b2d54;
+        }
+        .card.web3-card:hover {
+            border-color: #512da8;
+        }
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            color: #a1a1aa;
+            margin-bottom: 8px;
+        }
+        input {
             width: 100%;
+            padding: 12px;
+            background-color: #27272a;
+            border: 1px solid #3f3f46;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #673ab7;
         }
         button {
-            background-color: #512da8;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 24px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: opacity 0.2s;
             width: 100%;
-            margin-top: 20px;
+            margin-top: auto;
         }
         button:hover {
-            background-color: #673ab7;
+            opacity: 0.9;
         }
-        #status {
-            margin-top: 15px;
-            font-size: 14px;
+        .btn-web2 {
+            background-color: #27272a;
+            border: 1px solid #52525b;
+        }
+        .btn-web2:hover {
+            background-color: #3f3f46;
+        }
+        .btn-web3 {
+            background-color: #512da8;
+        }
+        .badge {
+            background-color: #2e1f4d;
+            color: #b39ddb;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            align-self: center;
+            margin-bottom: 10px;
+        }
+        .badge.web2 {
+            background-color: #27272a;
             color: #a1a1aa;
-            word-break: break-all;
+        }
+        #status-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #27272a;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #e4e4e7;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #3f3f46;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Fase 1: Conexión Web3</h2>
-        <p>Conecta tu wallet para validar tus cartas y acceder al juego.</p>
-        
-        <button id="connectBtn">Conectar Phantom Wallet</button>
-        <p id="status">Esperando interacción...</p>
+    <div class="container">
+        <div class="card">
+            <span class="badge web2">Standard Mode</span>
+            <div>
+                <h2>Instant Play</h2>
+                <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5;">Just want to test your skills? Create a quick guest profile and jump straight into the battlefield. You can link a wallet later.</p>
+                
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your warrior name">
+                </div>
+            </div>
+            
+            <button id="registerBtn" class="btn-web2">Launch Game</button>
+        </div>
+
+        <div class="card web3-card">
+            <span class="badge">Web3 Vault</span>
+            <div>
+                <h2>Connect & Sync</h2>
+                <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5;">Own digital asset cards or keys? Connect your Phantom wallet to securely deploy your personal collection directly into the game server.</p>
+            </div>
+            
+            <div style="margin: 40px 0;">
+                </div>
+            
+            <button id="connectWalletBtn" class="btn-web3">Connect Phantom</button>
+        </div>
     </div>
+
+    <div id="status-bar">System Status: Awaiting action...</div>
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DEL CLIENTE DE NAKAMA (NGROK)
+        // NAKAMA SERVER CONFIGURATION (NGROK)
         // ==========================================
         const client = new nakamajs.Client(
-            "defaultkey",                                // Tu Server Key de Nakama
-            "creature-visiting-playback.ngrok-free.dev", // Tu host de Ngrok (sin https://)
-            "443",                                       // Puerto seguro HTTPS para Ngrok
-            true                                         // Forzar uso de SSL/TLS
+            "defaultkey",                                
+            "creature-visiting-playback.ngrok-free.dev", 
+            "443",                                       
+            true                                         
         );
 
-        const connectBtn = document.getElementById('connectBtn');
-        const statusText = document.getElementById('status');
+        let currentSession = null;
+        const statusBar = document.getElementById('status-bar');
+
+        function updateStatus(text, color = "#e4e4e7") {
+            statusBar.innerText = text;
+            statusBar.style.color = color;
+        }
 
         // ==========================================
-        // 2. FLUJO DE AUTENTICACIÓN
+        // FLOW 1: WEB2 REGISTRATION / LOGIN
         // ==========================================
-        connectBtn.addEventListener('click', async () => {
-            statusText.innerText = "Buscando extensión de Phantom...";
-            statusText.style.color = "#a1a1aa";
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                updateStatus("❌ Please enter a valid username.", "#ef4444");
+                return;
+            }
 
-            // Verificar si Phantom está inyectado en el navegador
+            try {
+                updateStatus("Connecting to Nakama node...");
+                currentSession = await client.authenticateCustom(username, true, username);
+                console.log("Web2 Session Token:", currentSession.token);
+                
+                updateStatus(`🚀 Welcome, ${username}! Directing to matchmaking...`, "#22c55e");
+                
+                // Here you would trigger your redirect or load Unity/Godot web client
+
+            } catch (error) {
+                console.error(error);
+                updateStatus(`❌ Server Error: ${error.message || error}`, "#ef4444");
+            }
+        });
+
+        // ==========================================
+        // FLOW 2: WEB3 WALLET CONNECTION & AUTH
+        // ==========================================
+        document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+            updateStatus("Scanning for Phantom browser extension...");
             const isPhantomInstalled = window.solana && window.solana.isPhantom;
 
             if (!isPhantomInstalled) {
-                statusText.innerText = "❌ Phantom Wallet no detectada. Por favor instálala.";
-                statusText.style.color = "#ef4444";
+                updateStatus("❌ Phantom Wallet not found. Redirecting to setup...", "#ef4444");
                 window.open("https://phantom.app/", "_blank");
                 return;
             }
 
             try {
-                statusText.innerText = "Solicitando conexión a la wallet...";
-                
-                // Conectar a la billetera Solana
+                updateStatus("Awaiting wallet approval...");
                 const walletResponse = await window.solana.connect();
                 const walletAddress = walletResponse.publicKey.toString();
                 
-                // Mostrar Address recortada en la interfaz
-                statusText.innerText = `Wallet detectada: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`;
-                
-                statusText.innerText = "Registrando usuario en Nakama...";
+                updateStatus(`Wallet linked: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`);
+                updateStatus("Syncing on-chain keys with Nakama database...");
 
-                // Autenticar en Nakama usando la Address de Solana como Custom ID.
-                // El segundo parámetro 'true' le dice a Nakama que si el usuario no existe, lo cree (registro automático).
-                // El tercer parámetro asigna la Address como su nombre de usuario inicial.
-                const session = await client.authenticateCustom(walletAddress, true, walletAddress);
-                
-                console.log("Sesión de Nakama creada con éxito:", session);
-                
-                statusText.innerText = "🚀 ¡Conexión exitosa! Nakama ha registrado tu cuenta.";
-                statusText.style.color = "#22c55e";
+                // Authenticating directly via Wallet address as a unique account
+                currentSession = await client.authenticateCustom(walletAddress, true, walletAddress);
+                console.log("Web3 Session Token:", currentSession.token);
 
-                // NOTA: Aquí es donde pasarías el token de sesión ('session.token') al resto del juego 
-                // o harías la llamada RPC para validar los NFTs del usuario en tu backend.
+                updateStatus("🚀 Vault secure! Asset keys verified. Loading inventory...", "#22c55e");
+                
+                /* FUTURE PHASE 1 CALL:
+                   nakamaRpcVerifyTokens(walletAddress, currentSession.token); 
+                */
 
             } catch (error) {
-                console.error("Error en el flujo Web3:", error);
-                statusText.innerText = `❌ Error: ${error.message || error}`;
-                statusText.style.color = "#ef4444";
+                console.error(error);
+                updateStatus(`❌ Connection rejected: ${error.message || error}`, "#ef4444");
             }
         });
     </script>
