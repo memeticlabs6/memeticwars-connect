@@ -1,103 +1,1008 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MemeticWars - Registration Hub</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a1f0f; font-family: -apple-system, sans-serif; color: white; padding: 20px; }
-  h1 { font-size: 26px; margin-bottom: 4px; text-align: center; }
-  .subtitle { color: #aaa; font-size: 14px; margin-bottom: 24px; text-align: center; }
-  .step { display: none; width: 100%; max-width: 360px; flex-direction: column; gap: 12px; }
-  .step.active { display: flex; }
-  .field-label { font-size: 12px; color: #8fd68f; margin-bottom: 2px; margin-left: 2px; }
-  .input-wrap { position: relative; display: flex; align-items: center; }
-  input, select { width: 100%; background: #16241a; border: 1px solid #2d4030; border-radius: 10px; padding: 14px; color: white; font-size: 16px; }
-  .toggle-pw { position: absolute; right: 12px; cursor: pointer; font-size: 18px; color: #666; }
-  .choice-card { background: #16241a; border: 2px solid #2d4030; border-radius: 14px; padding: 20px; cursor: pointer; text-align: center; margin-bottom: 12px; }
-  .error { color: #ff6b6b; font-size: 13px; text-align: center; }
-  .status { color: #ab9ff2; font-size: 14px; text-align: center; }
-  button { background: linear-gradient(135deg, #ab9ff2, #6c4fd6); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeticWars - Registration Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0f3a5f;
+            --color-gold: #d4af37;
+            --color-dark: #1a1a1a;
+            --color-gray: #2c2c2c;
+            --color-gray-light: #4a4a4a;
+            --color-gray-lighter: #6a6a6a;
+            --color-bg: #0d0d0d;
+            --color-border: #d4af37;
+            --color-danger: #e74c3c;
+            --color-success: #2ecc71;
+            --color-warning: #f39c12;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            text-shadow: 0 0 20px var(--color-gold);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 20px var(--color-gold); }
+            50% { text-shadow: 0 0 40px var(--color-gold); }
+        }
+
+        .title {
+            font-size: 2rem;
+            color: var(--color-gold);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            border: 2px solid var(--color-gold);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(15, 58, 95, 0.3);
+        }
+
+        .subtitle {
+            color: var(--color-gray-lighter);
+            font-size: 0.9rem;
+            margin-bottom: var(--spacing-lg);
+            font-style: italic;
+        }
+
+        /* PASO 1: Selección de Modo */
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .mode-card {
+            background: rgba(15, 58, 95, 0.2);
+            border: 2px solid var(--color-gold);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .mode-card:hover::before {
+            left: 100%;
+        }
+
+        .mode-card:hover {
+            background: rgba(15, 58, 95, 0.4);
+            box-shadow: 0 0 20px var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        .mode-card.active {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 30px var(--color-gold);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            filter: drop-shadow(0 0 10px var(--color-gold));
+        }
+
+        .mode-title {
+            font-size: 1.3rem;
+            color: var(--color-gold);
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-sm);
+            font-weight: bold;
+        }
+
+        .mode-desc {
+            color: var(--color-gray-lighter);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* PASO 2: Formulario de Registro */
+        .registration-form {
+            background: rgba(15, 58, 95, 0.2);
+            border: 2px solid var(--color-gold);
+            padding: var(--spacing-lg);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .registration-form.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-gold);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-gold);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        input::placeholder {
+            color: var(--color-gray-lighter);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: var(--spacing-sm);
+            top: 35px;
+            background: none;
+            border: none;
+            color: var(--color-gold);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+            width: auto;
+            height: auto;
+        }
+
+        .toggle-btn:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .form-info {
+            font-size: 0.8rem;
+            color: var(--color-gray-lighter);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--color-danger);
+            color: #ff6b6b;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 2px;
+            margin-bottom: var(--spacing-md);
+            display: none;
+            animation: shake 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid var(--color-success);
+            color: #4ecdc4;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 2px;
+            margin-bottom: var(--spacing-md);
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--color-gold);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: var(--spacing-sm);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        button {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            color: var(--color-gold);
+            border: 2px solid var(--color-gold);
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(212, 175, 55, 0.2);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--color-gold);
+        }
+
+        /* SVG Meme Assets */
+        .meme-container {
+            text-align: center;
+            margin: var(--spacing-lg) 0;
+            opacity: 0.8;
+        }
+
+        .meme-svg {
+            max-width: 150px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            background: rgba(15, 58, 95, 0.95);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 2px;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🧠</div>
+            <h1 class="title">MemeticWars</h1>
+            <p class="subtitle">The Meme Trading Card Game</p>
+        </div>
 
-<h1>🪖 MemeticWars</h1>
-<p class="subtitle">Create your account</p>
+        <!-- PASO 1: Selección de Modo -->
+        <div id="modeSelection" class="mode-selection">
+            <div class="mode-card" data-mode="standard">
+                <div class="mode-icon">👤</div>
+                <div class="mode-title">Standard</div>
+                <div class="mode-desc">Traditional registration with email and password</div>
+            </div>
+            <div class="mode-card" data-mode="web3">
+                <div class="mode-icon">🔗</div>
+                <div class="mode-title">Web3</div>
+                <div class="mode-desc">Register with Phantom Wallet (Solana)</div>
+            </div>
+        </div>
 
-<div class="step active" id="step0">
-  <div class="choice-card" id="choice-free">
-    <div class="choice-title">Standard Account</div>
-    <div class="choice-desc">No wallet required.</div>
-  </div>
-  <div class="choice-card" id="choice-web3">
-    <div class="choice-title">Web3 Account</div>
-    <div class="choice-desc">Connect Phantom Wallet.</div>
-  </div>
-  <div class="error" id="step0-error"></div>
-</div>
+        <!-- PASO 2: Formulario de Registro -->
+        <div id="registrationForm" class="registration-form">
+            <div class="form-title" id="formTitle">Create Account</div>
 
-<div class="step" id="step1">
-  <div class="field-label">Username</div><input type="text" id="username">
-  <div class="field-label">Email</div><input type="email" id="email">
-  <div class="field-label">Password</div>
-  <div class="input-wrap"><input type="password" id="password"><span class="toggle-pw" id="toggle-pw1">👁</span></div>
-  <div class="field-label">Confirm</div>
-  <div class="input-wrap"><input type="password" id="confirm-password"><span class="toggle-pw" id="toggle-pw2">👁</span></div>
-  <div class="field-label">Date of Birth</div><input type="date" id="dob">
-  <button id="register-btn">Complete Registration</button>
-  <button id="back-step0-btn" style="background:none;">Back</button>
-  <div class="status" id="status-text"></div>
-</div>
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
 
-<div class="step" id="step2">
-  <div style="text-align:center;">✅</div>
-  <p id="success-title"></p>
-  <button onclick="window.location.href='memeticwars://onconnect'">Return to Game</button>
-</div>
+            <div class="meme-container" id="memeContainer"></div>
 
-<script>
-  const NAKAMA_URL = "https://creature-visiting-playback.ngrok-free.dev";
-  let isWeb3Mode = false;
+            <form id="regForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="5-10 characters (letters & numbers only)"
+                        required
+                    >
+                    <div class="form-info" id="usernameInfo"></div>
+                </div>
 
-  function goToStep(s) {
-    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-    document.getElementById('step' + s).classList.add('active');
-  }
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="your@email.com"
+                        required
+                    >
+                    <div class="form-info" id="emailInfo"></div>
+                </div>
 
-  document.getElementById('choice-free').onclick = () => { isWeb3Mode = false; goToStep(1); };
-  document.getElementById('choice-web3').onclick = () => { isWeb3Mode = true; goToStep(1); };
+                <div class="form-group password-toggle">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="At least 1 uppercase + 1 number"
+                        required
+                    >
+                    <button type="button" class="toggle-btn" id="togglePassword">Show</button>
+                    <div class="form-info" id="passwordInfo"></div>
+                </div>
 
-  document.getElementById('register-btn').onclick = async () => {
-    const statusEl = document.getElementById('status-text');
-    statusEl.textContent = 'Processing...';
-    try {
-      const res = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true`, {
-        method: 'POST',
-        headers: { 'Authorization': 'Basic ' + btoa('defaultkey:'), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
-      });
-      if (!res.ok) throw new Error("Auth failed");
-      const authData = await res.json();
-      
-      // Intentar guardar datos
-      const storageRes = await fetch(`${NAKAMA_URL}/v2/storage`, {
-        method: 'PUT',
-        headers: { 'Authorization': 'Bearer ' + authData.token, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          objects: [{ collection: "profiles", key: "info", value: JSON.stringify({ username: document.getElementById('username').value, dob: document.getElementById('dob').value }), permission_read: 1, permission_write: 1 }]
-        })
-      });
+                <div class="form-group password-toggle">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        placeholder="Repeat password"
+                        required
+                    >
+                    <button type="button" class="toggle-btn" id="toggleConfirmPassword">Show</button>
+                    <div class="form-info" id="confirmPasswordInfo"></div>
+                </div>
 
-      if (!storageRes.ok) {
-        const err = await storageRes.json();
-        alert("Error de Nakama al guardar datos: " + JSON.stringify(err));
-      } else {
-        goToStep(2);
-      }
-    } catch (e) { statusEl.textContent = e.message; }
-  };
-</script>
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" id="backBtn">Back</button>
+                    <button type="submit" id="submitBtn">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        const CONFIG = {
+            NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
+            SERVER_KEY: 'defaultkey',
+            GAME_ID: 'memetic-wars'
+        };
+
+        // ==================== ESTADO GLOBAL ====================
+        let appState = {
+            selectedMode: null,
+            authToken: null,
+            userId: null,
+            username: null,
+            email: null,
+            walletAddress: null,
+            walletSignature: null
+        };
+
+        // ==================== UTILIDADES ====================
+        const log = (title, data) => {
+            console.log(`%c[MemeticWars] ${title}`, 'color: #d4af37; font-weight: bold;', data);
+        };
+
+        const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        const showError = (message) => {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            log('ERROR', message);
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        };
+
+        const showSuccess = (message) => {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.classList.add('show');
+            log('SUCCESS', message);
+        };
+
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        };
+
+        // ==================== VALIDACIONES ====================
+        const validateUsername = (username) => {
+            const regex = /^[a-zA-Z0-9]{5,10}$/;
+            return regex.test(username);
+        };
+
+        const validateEmail = (email) => {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        };
+
+        const validatePassword = (password) => {
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const isLongEnough = password.length >= 6;
+            return hasUppercase && hasNumber && isLongEnough;
+        };
+
+        // ==================== NAKAMA AUTH ====================
+        const encodeBasicAuth = () => {
+            return btoa(`${CONFIG.SERVER_KEY}:`);
+        };
+
+        const registerWithNakama = async (email, password, username) => {
+            try {
+                log('Nakama Auth', `Intentando registro: ${email}`);
+
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/account/authenticate/email`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Basic ${encodeBasicAuth()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                            username: username,
+                            create: true
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Nakama Error: ${JSON.stringify(errorData)}`);
+                }
+
+                const data = await response.json();
+                log('Nakama Response', data);
+
+                appState.authToken = data.token;
+                appState.userId = data.user_id;
+                appState.username = username;
+                appState.email = email;
+
+                localStorage.setItem('authToken', appState.authToken);
+                localStorage.setItem('userId', appState.userId);
+                localStorage.setItem('username', appState.username);
+
+                return { success: true, data };
+            } catch (error) {
+                log('Nakama Error', error.message);
+                throw error;
+            }
+        };
+
+        // ==================== STORAGE EN NAKAMA ====================
+        const saveProfileToStorage = async (profileData) => {
+            try {
+                if (!appState.authToken) {
+                    throw new Error('No authentication token available');
+                }
+
+                log('Storage', `Guardando perfil: ${JSON.stringify(profileData)}`);
+
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/storage`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${appState.authToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            objects: [
+                                {
+                                    collection: 'profiles',
+                                    key: 'info',
+                                    value: JSON.stringify(profileData),
+                                    permission_read: 1,
+                                    permission_write: 1
+                                }
+                            ]
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    const errorMsg = `Storage Error: ${JSON.stringify(errorData)}`;
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                log('Storage Success', data);
+                return { success: true, data };
+            } catch (error) {
+                log('Storage Error', error.message);
+                throw error;
+            }
+        };
+
+        // ==================== WEB3 PHANTOM ====================
+        const connectPhantomWallet = async () => {
+            try {
+                log('Phantom', 'Iniciando conexión...');
+
+                const provider = window.solana || window.phantom?.solana;
+
+                if (!provider) {
+                    if (isMobile()) {
+                        log('Phantom Mobile', 'Abriendo Phantom app...');
+                        const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}`;
+                        window.location.href = deepLink;
+                        return null;
+                    }
+                    throw new Error('Phantom Wallet no está instalado. Descárgalo en phantom.app');
+                }
+
+                const response = await provider.connect();
+                const walletAddress = response.publicKey.toString();
+
+                appState.walletAddress = walletAddress;
+                log('Phantom Connected', walletAddress);
+
+                return walletAddress;
+            } catch (error) {
+                log('Phantom Error', error.message);
+                throw error;
+            }
+        };
+
+        const signMessageWithPhantom = async (message) => {
+            try {
+                log('Phantom Sign', `Firmando: ${message}`);
+
+                const provider = window.solana || window.phantom?.solana;
+
+                if (!provider) {
+                    throw new Error('Phantom Wallet no disponible');
+                }
+
+                const encodedMessage = new TextEncoder().encode(message);
+                const response = await provider.signMessage(encodedMessage, 'utf8');
+                const signature = Buffer.from(response.signature).toString('hex');
+
+                appState.walletSignature = signature;
+                log('Signature Success', signature.substring(0, 20) + '...');
+
+                return signature;
+            } catch (error) {
+                log('Sign Error', error.message);
+                throw error;
+            }
+        };
+
+        // ==================== SVG MEMES ====================
+        const generateMemesSVG = (mode) => {
+            const container = document.getElementById('memeContainer');
+
+            if (mode === 'standard') {
+                // Wojak triste
+                container.innerHTML = `
+                    <svg class="meme-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="30" r="20" fill="#d4af37" stroke="#fff" stroke-width="1"/>
+                        <circle cx="42" cy="25" r="3" fill="#000"/>
+                        <circle cx="58" cy="25" r="3" fill="#000"/>
+                        <path d="M 45 35 Q 50 38 55 35" stroke="#000" fill="none" stroke-width="1"/>
+                        <path d="M 45 38 L 45 42" stroke="#000" stroke-width="1"/>
+                        <path d="M 55 38 L 55 42" stroke="#000" stroke-width="1"/>
+                        <rect x="35" y="50" width="30" height="40" fill="#d4af37" stroke="#fff" stroke-width="1"/>
+                        <rect x="38" y="55" width="5" height="25" fill="#ddd"/>
+                        <rect x="57" y="55" width="5" height="25" fill="#ddd"/>
+                    </svg>
+                `;
+            } else {
+                // Chad basado
+                container.innerHTML = `
+                    <svg class="meme-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="30" r="22" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                        <circle cx="40" cy="24" r="4" fill="#000"/>
+                        <circle cx="60" cy="24" r="4" fill="#000"/>
+                        <path d="M 42 32 Q 50 36 58 32" stroke="#000" fill="none" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M 38 38 L 35 50" stroke="#000" stroke-width="2"/>
+                        <path d="M 62 38 L 65 50" stroke="#000" stroke-width="2"/>
+                        <rect x="32" y="50" width="36" height="45" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                        <path d="M 35 70 L 35 80" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 65 70 L 65 80" stroke="#000" stroke-width="1.5"/>
+                    </svg>
+                `;
+            }
+        };
+
+        // ==================== FLUJO UI ====================
+        const showModeSelection = () => {
+            document.getElementById('modeSelection').style.display = 'grid';
+            document.getElementById('registrationForm').classList.remove('active');
+            appState.selectedMode = null;
+            log('UI', 'Mostrando selección de modo');
+        };
+
+        const showRegistrationForm = (mode) => {
+            appState.selectedMode = mode;
+            document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('registrationForm').classList.add('active');
+
+            const title = mode === 'standard' ? 'Standard Registration' : 'Web3 Registration';
+            document.getElementById('formTitle').textContent = title;
+
+            generateMemesSVG(mode);
+            document.getElementById('regForm').reset();
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+
+            log('UI', `Formulario de ${mode} activo`);
+        };
+
+        // ==================== EVENT LISTENERS ====================
+        document.querySelectorAll('.mode-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                showRegistrationForm(card.dataset.mode);
+            });
+        });
+
+        document.getElementById('backBtn').addEventListener('click', showModeSelection);
+
+        document.getElementById('togglePassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('password');
+            const btn = e.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('confirmPassword');
+            const btn = e.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        });
+
+        // Real-time validation
+        document.getElementById('username').addEventListener('input', (e) => {
+            const value = e.target.value;
+            const info = document.getElementById('usernameInfo');
+            if (value && !validateUsername(value)) {
+                info.textContent = '✗ 5-10 characters (alphanumeric only)';
+                info.style.color = '#e74c3c';
+            } else if (value) {
+                info.textContent = '✓ Valid';
+                info.style.color = '#2ecc71';
+            } else {
+                info.textContent = '';
+            }
+        });
+
+        document.getElementById('email').addEventListener('input', (e) => {
+            const value = e.target.value;
+            const info = document.getElementById('emailInfo');
+            if (value && !validateEmail(value)) {
+                info.textContent = '✗ Invalid email format';
+                info.style.color = '#e74c3c';
+            } else if (value) {
+                info.textContent = '✓ Valid';
+                info.style.color = '#2ecc71';
+            } else {
+                info.textContent = '';
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', (e) => {
+            const value = e.target.value;
+            const info = document.getElementById('passwordInfo');
+            if (value && !validatePassword(value)) {
+                info.textContent = '✗ At least 6 chars, 1 uppercase, 1 number';
+                info.style.color = '#e74c3c';
+            } else if (value) {
+                info.textContent = '✓ Valid';
+                info.style.color = '#2ecc71';
+            } else {
+                info.textContent = '';
+            }
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', (e) => {
+            const password = document.getElementById('password').value;
+            const confirm = e.target.value;
+            const info = document.getElementById('confirmPasswordInfo');
+            if (confirm && password !== confirm) {
+                info.textContent = '✗ Passwords do not match';
+                info.style.color = '#e74c3c';
+            } else if (confirm) {
+                info.textContent = '✓ Passwords match';
+                info.style.color = '#2ecc71';
+            } else {
+                info.textContent = '';
+            }
+        });
+
+        // ==================== FORM SUBMISSION ====================
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleRegistration();
+        });
+
+        const handleRegistration = async () => {
+            const submitBtn = document.getElementById('submitBtn');
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            log('Form Submit', { username, email, mode: appState.selectedMode });
+
+            // Validaciones
+            if (!validateUsername(username)) {
+                showError('Invalid username format (5-10 alphanumeric characters)');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showError('Invalid email format');
+                return;
+            }
+
+            if (!validatePassword(password)) {
+                showError('Password must have at least 1 uppercase letter and 1 number (6+ chars)');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>Registering...';
+
+            try {
+                // PASO 1: Nakama Authentication
+                log('Step 1', 'Authenticating with Nakama...');
+                await registerWithNakama(email, password, username);
+                showSuccess('✓ Account created! Saving profile...');
+
+                // PASO 2: Guardar perfil en Storage
+                let profileData = {
+                    username: username,
+                    email: email,
+                    createdAt: new Date().toISOString(),
+                    mode: appState.selectedMode
+                };
+
+                // PASO 3: Web3 - Firmar con Phantom
+                if (appState.selectedMode === 'web3') {
+                    log('Step 2', 'Initiating Phantom connection...');
+
+                    try {
+                        const walletAddress = await connectPhantomWallet();
+                        if (!walletAddress) {
+                            log('Web3', 'Esperando deep link de Phantom en móvil...');
+                            return;
+                        }
+
+                        const messageToSign = `Sign in to MemeticWars - ${Date.now()}`;
+                        log('Step 3', 'Signing message with Phantom...');
+                        const signature = await signMessageWithPhantom(messageToSign);
+
+                        profileData.walletAddress = walletAddress;
+                        profileData.walletSignature = signature;
+                        profileData.signedAt = new Date().toISOString();
+
+                        showSuccess('✓ Wallet connected and signed!');
+                    } catch (phantomError) {
+                        showError(`Phantom Error: ${phantomError.message}`);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Register';
+                        return;
+                    }
+                }
+
+                // PASO 4: Guardar en Nakama Storage
+                log('Step 4', 'Saving profile to Nakama Storage...');
+                await saveProfileToStorage(profileData);
+
+                showSuccess(`✓ Registration complete! Welcome to MemeticWars, ${username}!`);
+                log('Registration Complete', appState);
+
+                // Mostrar resumen
+                setTimeout(() => {
+                    alert(`
+Registration Successful!
+
+Username: ${username}
+Email: ${email}
+Mode: ${appState.selectedMode.toUpperCase()}
+${appState.walletAddress ? `Wallet: ${appState.walletAddress}` : ''}
+
+Token: ${appState.authToken.substring(0, 20)}...
+
+Redirigiendo al juego...
+                    `);
+
+                    // Redirigir al juego
+                    window.location.href = `${CONFIG.GAME_ID}://game/start?token=${appState.authToken}`;
+                }, 2000);
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Register';
+            }
+        };
+
+        // ==================== INIT ====================
+        log('App Started', {
+            nakama_url: CONFIG.NAKAMA_URL,
+            is_mobile: isMobile(),
+            version: '1.0.0'
+        });
+
+        // Verificar si viene del deep link de Phantom
+        if (new URLSearchParams(window.location.search).get('phantom_connected')) {
+            log('Deep Link', 'Phantom connected via deep link');
+            showToast('Phantom wallet connected!');
+        }
+    </script>
 </body>
 </html>
