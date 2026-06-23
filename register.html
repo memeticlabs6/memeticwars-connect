@@ -78,39 +78,58 @@
 
   document.getElementById('register-btn').addEventListener('click', async () => {
     const statusEl = document.getElementById('status-text');
-    statusEl.textContent = 'Processing...';
+    statusEl.textContent = 'Procesando...';
     
     try {
-      // 1. Registro simple (Email/Password)
+      // 1. Autenticación (Lo que YA funciona)
       const res = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true`, {
         method: 'POST',
         headers: { 'Authorization': 'Basic ' + btoa('defaultkey:'), 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
       });
-      if (!res.ok) throw new Error("Server connection failed.");
       
-      // 2. Lógica forzada de Firma Web3
+      if (!res.ok) throw new Error("Error en Login: " + res.status);
+      const authData = await res.json();
+      const token = authData.token;
+
+      // 2. Intentar guardar en Storage (Aquí es donde está el fallo)
+      const storageResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': 'Bearer ' + token, 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          objects: [{
+            collection: "profiles",
+            key: "userData",
+            value: JSON.stringify({ username: document.getElementById('username').value, dob: document.getElementById('dob').value }),
+            permission_read: 1,
+            permission_write: 1
+          }]
+        })
+      });
+
+      // ESTO ES LO QUE NOS VA A DAR LA PISTA
+      if (!storageResp.ok) {
+        const errorData = await storageResp.json();
+        console.error("DETALLE DEL ERROR NAKAMA:", errorData);
+        alert("ERROR DE NAKAMA: " + JSON.stringify(errorData));
+        throw new Error("No se pudo guardar el perfil.");
+      }
+
+      // 3. Firma (Si es Web3)
       if (isWeb3Mode) {
         const provider = window.solana || window.phantom?.solana;
-        if (!provider) throw new Error("Wallet not found. Use Phantom Browser.");
-        
-        statusEl.textContent = 'Connecting...';
+        if (!provider) throw new Error("Phantom no detectado.");
         await provider.connect();
-        
-        statusEl.textContent = 'Confirm signature in wallet...';
-        
-        const message = "Verify wallet for MemeticWars: " + document.getElementById('username').value;
-        const encodedMessage = new TextEncoder().encode(message);
-        
-        // Esta línea es la que debe disparar la ventana de firma de Phantom
-        const signed = await provider.signMessage(encodedMessage, "utf8");
-        
-        console.log("Firma exitosa:", signed.signature);
+        const msg = new TextEncoder().encode("Registro en MemeticWars");
+        await provider.signMessage(msg, "utf8");
       }
       
       goToStep(2);
     } catch (e) { 
-      statusEl.textContent = "Error: " + e.message; 
+      statusEl.textContent = "Error: " + e.message;
       console.error(e);
     }
   });
