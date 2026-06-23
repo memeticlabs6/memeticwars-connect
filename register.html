@@ -79,8 +79,9 @@
   document.getElementById('register-btn').addEventListener('click', async () => {
     const statusEl = document.getElementById('status-text');
     statusEl.textContent = 'Processing...';
+    
     try {
-      // 1. Auth simple
+      // 1. Registro simple (Email/Password)
       const res = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true`, {
         method: 'POST',
         headers: { 'Authorization': 'Basic ' + btoa('defaultkey:'), 'Content-Type': 'application/json' },
@@ -88,25 +89,28 @@
       });
       if (!res.ok) throw new Error("Server connection failed.");
       
-      // 2. Lógica de Firma Web3
+      // 2. Lógica forzada de Firma Web3
       if (isWeb3Mode) {
         const provider = window.solana || window.phantom?.solana;
-        if (!provider) throw new Error("Phantom Wallet not found.");
+        if (!provider) throw new Error("Wallet not found. Use Phantom Browser.");
         
-        statusEl.textContent = 'Connecting Wallet...';
+        statusEl.textContent = 'Connecting...';
         await provider.connect();
         
-        statusEl.textContent = 'Please sign the request in your wallet...';
-        const msg = new TextEncoder().encode("Verify wallet for MemeticWars: " + document.getElementById('username').value);
-        const signed = await provider.signMessage(msg, "utf8");
-        const sigBase64 = btoa(String.fromCharCode(...signed.signature));
+        statusEl.textContent = 'Confirm signature in wallet...';
         
-        console.log("Firma obtenida:", sigBase64);
+        const message = "Verify wallet for MemeticWars: " + document.getElementById('username').value;
+        const encodedMessage = new TextEncoder().encode(message);
+        
+        // Esta línea es la que debe disparar la ventana de firma de Phantom
+        const signed = await provider.signMessage(encodedMessage, "utf8");
+        
+        console.log("Firma exitosa:", signed.signature);
       }
       
       goToStep(2);
-    } catch (e) { statusEl.textContent = e.message; }
+    } catch (e) { 
+      statusEl.textContent = "Error: " + e.message; 
+      console.error(e);
+    }
   });
-</script>
-</body>
-</html>
