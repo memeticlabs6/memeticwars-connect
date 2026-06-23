@@ -23,11 +23,6 @@
             --color-danger: #e74c3c;
             --color-success: #2ecc71;
             --color-warning: #f39c12;
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
         }
 
         body {
@@ -36,9 +31,128 @@
             color: #fff;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        /* MENÚ SUPERIOR */
+        .top-menu {
+            background: rgba(15, 58, 95, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-logo {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-button {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-button:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 24px;
+            background: rgba(15, 58, 95, 0.95);
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            min-width: 250px;
+            display: none;
+            z-index: 100;
+        }
+
+        .user-dropdown.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-info {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gold);
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .user-info-label {
+            color: var(--color-gray-lighter);
+        }
+
+        .user-info-value {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .dropdown-action {
+            padding: 12px 16px;
+            color: var(--color-gold);
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 1px solid var(--color-gold);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .dropdown-action:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .dropdown-action:last-child {
+            border-bottom: none;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .container-wrapper {
+            flex: 1;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--spacing-md);
+            padding: 24px;
         }
 
         .container {
@@ -48,13 +162,13 @@
 
         .header {
             text-align: center;
-            margin-bottom: var(--spacing-xl);
+            margin-bottom: 32px;
             position: relative;
         }
 
         .logo {
             font-size: 3rem;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
             text-shadow: 0 0 20px var(--color-gold);
             animation: pulse-glow 2s ease-in-out infinite;
         }
@@ -67,19 +181,19 @@
         .title {
             font-size: 2rem;
             color: var(--color-gold);
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 3px;
             font-weight: bold;
             border: 2px solid var(--color-gold);
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: 12px 16px;
             background: rgba(15, 58, 95, 0.3);
         }
 
         .subtitle {
             color: var(--color-gray-lighter);
             font-size: 0.9rem;
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: 24px;
             font-style: italic;
         }
 
@@ -87,14 +201,14 @@
         .mode-selection {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .mode-card {
             background: rgba(15, 58, 95, 0.2);
             border: 2px solid var(--color-gold);
-            padding: var(--spacing-lg);
+            padding: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -130,7 +244,7 @@
 
         .mode-icon {
             font-size: 3rem;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
             filter: drop-shadow(0 0 10px var(--color-gold));
         }
 
@@ -138,7 +252,7 @@
             font-size: 1.3rem;
             color: var(--color-gold);
             text-transform: uppercase;
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: 12px;
             font-weight: bold;
         }
 
@@ -152,7 +266,7 @@
         .registration-form {
             background: rgba(15, 58, 95, 0.2);
             border: 2px solid var(--color-gold);
-            padding: var(--spacing-lg);
+            padding: 24px;
             border-radius: 4px;
             display: none;
         }
@@ -176,18 +290,18 @@
         .form-title {
             font-size: 1.5rem;
             color: var(--color-gold);
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
             text-align: center;
             text-transform: uppercase;
         }
 
         .form-group {
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 8px;
             color: var(--color-gold);
             font-weight: bold;
             font-size: 0.9rem;
@@ -197,7 +311,7 @@
 
         input {
             width: 100%;
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: 12px 16px;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--color-gold);
             color: #fff;
@@ -224,7 +338,7 @@
 
         .toggle-btn {
             position: absolute;
-            right: var(--spacing-sm);
+            right: 12px;
             top: 35px;
             background: none;
             border: none;
@@ -251,9 +365,9 @@
             background: rgba(231, 76, 60, 0.2);
             border: 1px solid var(--color-danger);
             color: #ff6b6b;
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: 12px 16px;
             border-radius: 2px;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
             display: none;
             animation: shake 0.3s ease;
         }
@@ -272,15 +386,80 @@
             background: rgba(46, 204, 113, 0.2);
             border: 1px solid var(--color-success);
             color: #4ecdc4;
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: 12px 16px;
             border-radius: 2px;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 16px;
             display: none;
             animation: slideIn 0.3s ease;
         }
 
         .success-message.show {
             display: block;
+        }
+
+        .success-screen {
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-screen.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            color: var(--color-success);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .success-text {
+            color: var(--color-gray-lighter);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .success-info {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            padding: 16px;
+            border-radius: 2px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .success-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .success-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .success-label {
+            color: var(--color-gray-lighter);
+            font-size: 0.9rem;
+        }
+
+        .success-value {
+            color: var(--color-gold);
+            font-weight: bold;
         }
 
         .loading-spinner {
@@ -291,7 +470,7 @@
             border-top-color: transparent;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
-            margin-right: var(--spacing-sm);
+            margin-right: 12px;
         }
 
         @keyframes spin {
@@ -300,13 +479,13 @@
 
         .button-group {
             display: flex;
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-lg);
+            gap: 16px;
+            margin-top: 24px;
         }
 
         button {
             flex: 1;
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: 16px 24px;
             background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
             color: var(--color-gold);
             border: 2px solid var(--color-gold);
@@ -358,10 +537,14 @@
             color: var(--color-gold);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+        }
+
         /* SVG Meme Assets */
         .meme-container {
             text-align: center;
-            margin: var(--spacing-lg) 0;
+            margin: 24px 0;
             opacity: 0.8;
         }
 
@@ -374,12 +557,12 @@
         /* Toast Notifications */
         .toast {
             position: fixed;
-            bottom: var(--spacing-lg);
-            right: var(--spacing-lg);
+            bottom: 24px;
+            right: 24px;
             background: rgba(15, 58, 95, 0.95);
             border: 1px solid var(--color-gold);
             color: var(--color-gold);
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: 16px 24px;
             border-radius: 2px;
             max-width: 300px;
             animation: slideInRight 0.3s ease;
@@ -414,92 +597,185 @@
             .button-group {
                 flex-direction: column;
             }
+
+            .top-menu {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-dropdown {
+                right: 0;
+                left: 0;
+                margin: 0 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">🧠</div>
-            <h1 class="title">MemeticWars</h1>
-            <p class="subtitle">The Meme Trading Card Game</p>
-        </div>
-
-        <!-- PASO 1: Selección de Modo -->
-        <div id="modeSelection" class="mode-selection">
-            <div class="mode-card" data-mode="standard">
-                <div class="mode-icon">👤</div>
-                <div class="mode-title">Standard</div>
-                <div class="mode-desc">Traditional registration with email and password</div>
+    <!-- MENÚ SUPERIOR -->
+    <div class="top-menu">
+        <div class="menu-logo">MemeticWars</div>
+        <div class="user-menu">
+            <button class="user-button" id="userMenuBtn" style="display: none;">
+                <span>👤</span>
+                <span id="userMenuUsername">Usuario</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info" id="userInfo">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Username:</span>
+                        <span class="user-info-value" id="dropdownUsername">-</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Email:</span>
+                        <span class="user-info-value" id="dropdownEmail">-</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Modo:</span>
+                        <span class="user-info-value" id="dropdownMode">-</span>
+                    </div>
+                    <div class="user-info-item" id="dropdownWalletItem" style="display: none;">
+                        <span class="user-info-label">Wallet:</span>
+                        <span class="user-info-value" id="dropdownWallet">-</span>
+                    </div>
+                </div>
+                <div class="dropdown-action" id="logoutBtn">Cerrar Sesión</div>
             </div>
-            <div class="mode-card" data-mode="web3">
-                <div class="mode-icon">🔗</div>
-                <div class="mode-title">Web3</div>
-                <div class="mode-desc">Register with Phantom Wallet (Solana)</div>
-            </div>
         </div>
+    </div>
 
-        <!-- PASO 2: Formulario de Registro -->
-        <div id="registrationForm" class="registration-form">
-            <div class="form-title" id="formTitle">Create Account</div>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="container-wrapper">
+        <div class="container">
+            <div class="header">
+                <div class="logo">🧠</div>
+                <h1 class="title">MemeticWars</h1>
+                <p class="subtitle">The Meme Trading Card Game</p>
+            </div>
 
-            <div id="errorMessage" class="error-message"></div>
-            <div id="successMessage" class="success-message"></div>
+            <!-- PASO 1: Selección de Modo -->
+            <div id="modeSelection" class="mode-selection">
+                <div class="mode-card" data-mode="standard">
+                    <div class="mode-icon">👤</div>
+                    <div class="mode-title">Standard</div>
+                    <div class="mode-desc">Traditional registration with email and password</div>
+                </div>
+                <div class="mode-card" data-mode="web3">
+                    <div class="mode-icon">🔗</div>
+                    <div class="mode-title">Web3</div>
+                    <div class="mode-desc">Register with Phantom Wallet (Solana)</div>
+                </div>
+            </div>
 
-            <div class="meme-container" id="memeContainer"></div>
+            <!-- PASO 2: Formulario de Registro -->
+            <div id="registrationForm" class="registration-form">
+                <div class="form-title" id="formTitle">Create Account</div>
 
-            <form id="regForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        placeholder="5-10 characters (letters & numbers only)"
-                        required
-                    >
-                    <div class="form-info" id="usernameInfo"></div>
+                <div id="errorMessage" class="error-message"></div>
+                <div id="successMessage" class="success-message"></div>
+
+                <div class="meme-container" id="memeContainer"></div>
+
+                <form id="regForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            placeholder="5-10 characters (letters & numbers only)"
+                            required
+                        >
+                        <div class="form-info" id="usernameInfo"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="your@email.com"
+                            required
+                        >
+                        <div class="form-info" id="emailInfo"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birthDate">Birth Date</label>
+                        <input 
+                            type="date" 
+                            id="birthDate"
+                            required
+                        >
+                        <div class="form-info" id="birthDateInfo"></div>
+                    </div>
+
+                    <div class="form-group password-toggle">
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="At least 1 uppercase + 1 number"
+                            required
+                        >
+                        <button type="button" class="toggle-btn" id="togglePassword">Show</button>
+                        <div class="form-info" id="passwordInfo"></div>
+                    </div>
+
+                    <div class="form-group password-toggle">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            placeholder="Repeat password"
+                            required
+                        >
+                        <button type="button" class="toggle-btn" id="toggleConfirmPassword">Show</button>
+                        <div class="form-info" id="confirmPasswordInfo"></div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-secondary" id="backBtn">Back</button>
+                        <button type="submit" id="submitBtn">Register</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PANTALLA DE ÉXITO -->
+            <div id="successScreen" class="success-screen">
+                <div class="success-icon">✨</div>
+                <h2 class="success-title">Registration Successful!</h2>
+                <p class="success-text">Welcome to MemeticWars, <strong id="successUsername"></strong>!</p>
+                
+                <div class="success-info" id="successInfoBox">
+                    <div class="success-info-item">
+                        <span class="success-label">Username:</span>
+                        <span class="success-value" id="successDisplayUsername"></span>
+                    </div>
+                    <div class="success-info-item">
+                        <span class="success-label">Email:</span>
+                        <span class="success-value" id="successDisplayEmail"></span>
+                    </div>
+                    <div class="success-info-item">
+                        <span class="success-label">Mode:</span>
+                        <span class="success-value" id="successDisplayMode"></span>
+                    </div>
+                    <div class="success-info-item" id="successWalletBox" style="display: none;">
+                        <span class="success-label">Wallet:</span>
+                        <span class="success-value" id="successDisplayWallet"></span>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        placeholder="your@email.com"
-                        required
-                    >
-                    <div class="form-info" id="emailInfo"></div>
-                </div>
-
-                <div class="form-group password-toggle">
-                    <label for="password">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="At least 1 uppercase + 1 number"
-                        required
-                    >
-                    <button type="button" class="toggle-btn" id="togglePassword">Show</button>
-                    <div class="form-info" id="passwordInfo"></div>
-                </div>
-
-                <div class="form-group password-toggle">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        placeholder="Repeat password"
-                        required
-                    >
-                    <button type="button" class="toggle-btn" id="toggleConfirmPassword">Show</button>
-                    <div class="form-info" id="confirmPasswordInfo"></div>
-                </div>
-
+                <p class="success-text">You can now log in to the game!</p>
+                
                 <div class="button-group">
-                    <button type="button" class="btn-secondary" id="backBtn">Back</button>
-                    <button type="submit" id="submitBtn">Register</button>
+                    <button type="button" class="btn-success" id="launchGameBtn">Launch Game</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -518,8 +794,10 @@
             userId: null,
             username: null,
             email: null,
+            birthDate: null,
             walletAddress: null,
-            walletSignature: null
+            walletSignature: null,
+            isLoggedIn: false
         };
 
         // ==================== UTILIDADES ====================
@@ -561,6 +839,11 @@
         const validateEmail = (email) => {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return regex.test(email);
+        };
+
+        const validateBirthDate = (dateString) => {
+            const date = new Date(dateString);
+            return !isNaN(date.getTime());
         };
 
         const validatePassword = (password) => {
@@ -608,14 +891,47 @@
                 appState.userId = data.user_id;
                 appState.username = username;
                 appState.email = email;
+                appState.isLoggedIn = true;
 
                 localStorage.setItem('authToken', appState.authToken);
                 localStorage.setItem('userId', appState.userId);
                 localStorage.setItem('username', appState.username);
+                localStorage.setItem('email', appState.email);
 
                 return { success: true, data };
             } catch (error) {
                 log('Nakama Error', error.message);
+                throw error;
+            }
+        };
+
+        const updateNakamaDisplayName = async (displayName) => {
+            try {
+                log('Update Display Name', displayName);
+
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/account`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${appState.authToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            display_name: displayName
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Update Error: ${JSON.stringify(errorData)}`);
+                }
+
+                log('Display Name Updated', displayName);
+                return true;
+            } catch (error) {
+                log('Update Error', error.message);
                 throw error;
             }
         };
@@ -666,6 +982,55 @@
             }
         };
 
+        const createPlayerStats = async () => {
+            try {
+                log('Player Stats', 'Creando estadísticas iniciales');
+
+                const statsData = {
+                    username: appState.username,
+                    victorias: 0,
+                    derrotas: 0,
+                    posicion: 0,
+                    elo_score: 1000,
+                    rango: 'Sin asignar',
+                    createdAt: new Date().toISOString(),
+                    fecha_ultima_partida: null
+                };
+
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/storage`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${appState.authToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            objects: [
+                                {
+                                    collection: 'player_stats',
+                                    key: appState.username,
+                                    value: JSON.stringify(statsData),
+                                    permission_read: 1,
+                                    permission_write: 1
+                                }
+                            ]
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Error creando player stats');
+                }
+
+                log('Player Stats Created', statsData);
+                return true;
+            } catch (error) {
+                log('Stats Error', error.message);
+                throw error;
+            }
+        };
+
         // ==================== WEB3 PHANTOM ====================
         const connectPhantomWallet = async () => {
             try {
@@ -676,7 +1041,8 @@
                 if (!provider) {
                     if (isMobile()) {
                         log('Phantom Mobile', 'Abriendo Phantom app...');
-                        const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}`;
+                        const currentUrl = window.location.href;
+                        const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl + '?source=phantom&mode=web3')}`;
                         window.location.href = deepLink;
                         return null;
                     }
@@ -725,7 +1091,6 @@
             const container = document.getElementById('memeContainer');
 
             if (mode === 'standard') {
-                // Wojak triste
                 container.innerHTML = `
                     <svg class="meme-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="30" r="20" fill="#d4af37" stroke="#fff" stroke-width="1"/>
@@ -740,7 +1105,6 @@
                     </svg>
                 `;
             } else {
-                // Chad basado
                 container.innerHTML = `
                     <svg class="meme-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="30" r="22" fill="#d4af37" stroke="#fff" stroke-width="2"/>
@@ -761,6 +1125,7 @@
         const showModeSelection = () => {
             document.getElementById('modeSelection').style.display = 'grid';
             document.getElementById('registrationForm').classList.remove('active');
+            document.getElementById('successScreen').classList.remove('show');
             appState.selectedMode = null;
             log('UI', 'Mostrando selección de modo');
         };
@@ -768,6 +1133,7 @@
         const showRegistrationForm = (mode) => {
             appState.selectedMode = mode;
             document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('successScreen').classList.remove('show');
             document.getElementById('registrationForm').classList.add('active');
 
             const title = mode === 'standard' ? 'Standard Registration' : 'Web3 Registration';
@@ -781,6 +1147,43 @@
             log('UI', `Formulario de ${mode} activo`);
         };
 
+        const showSuccessScreen = () => {
+            document.getElementById('registrationForm').classList.remove('active');
+            document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('successScreen').classList.add('show');
+
+            // Llenar datos en pantalla de éxito
+            document.getElementById('successUsername').textContent = appState.username;
+            document.getElementById('successDisplayUsername').textContent = appState.username;
+            document.getElementById('successDisplayEmail').textContent = appState.email;
+            document.getElementById('successDisplayMode').textContent = appState.selectedMode.toUpperCase();
+
+            if (appState.walletAddress) {
+                const shortWallet = appState.walletAddress.substring(0, 3) + '...' + appState.walletAddress.substring(appState.walletAddress.length - 3);
+                document.getElementById('successWalletBox').style.display = 'flex';
+                document.getElementById('successDisplayWallet').textContent = shortWallet;
+            }
+
+            // Actualizar menú superior
+            updateUserMenu();
+        };
+
+        const updateUserMenu = () => {
+            if (appState.isLoggedIn) {
+                document.getElementById('userMenuBtn').style.display = 'flex';
+                document.getElementById('userMenuUsername').textContent = appState.username;
+                document.getElementById('dropdownUsername').textContent = appState.username;
+                document.getElementById('dropdownEmail').textContent = appState.email;
+                document.getElementById('dropdownMode').textContent = appState.selectedMode.toUpperCase();
+
+                if (appState.walletAddress) {
+                    const shortWallet = appState.walletAddress.substring(0, 3) + '...' + appState.walletAddress.substring(appState.walletAddress.length - 3);
+                    document.getElementById('dropdownWalletItem').style.display = 'flex';
+                    document.getElementById('dropdownWallet').textContent = shortWallet;
+                }
+            }
+        };
+
         // ==================== EVENT LISTENERS ====================
         document.querySelectorAll('.mode-card').forEach(card => {
             card.addEventListener('click', () => {
@@ -791,6 +1194,30 @@
         });
 
         document.getElementById('backBtn').addEventListener('click', showModeSelection);
+
+        document.getElementById('userMenuBtn').addEventListener('click', () => {
+            document.getElementById('userDropdown').classList.toggle('show');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.clear();
+            appState = {
+                selectedMode: null,
+                authToken: null,
+                userId: null,
+                username: null,
+                email: null,
+                birthDate: null,
+                walletAddress: null,
+                walletSignature: null,
+                isLoggedIn: false
+            };
+            document.getElementById('userMenuBtn').style.display = 'none';
+            document.getElementById('userDropdown').classList.remove('show');
+            showModeSelection();
+            showToast('Sesión cerrada');
+            log('Logout', 'Usuario desconectado');
+        });
 
         document.getElementById('togglePassword').addEventListener('click', (e) => {
             e.preventDefault();
@@ -847,6 +1274,20 @@
             }
         });
 
+        document.getElementById('birthDate').addEventListener('input', (e) => {
+            const value = e.target.value;
+            const info = document.getElementById('birthDateInfo');
+            if (value && !validateBirthDate(value)) {
+                info.textContent = '✗ Invalid date';
+                info.style.color = '#e74c3c';
+            } else if (value) {
+                info.textContent = '✓ Valid';
+                info.style.color = '#2ecc71';
+            } else {
+                info.textContent = '';
+            }
+        });
+
         document.getElementById('password').addEventListener('input', (e) => {
             const value = e.target.value;
             const info = document.getElementById('passwordInfo');
@@ -882,10 +1323,15 @@
             await handleRegistration();
         });
 
+        document.getElementById('launchGameBtn').addEventListener('click', () => {
+            window.location.href = `memetic-wars://game/start?token=${appState.authToken}`;
+        });
+
         const handleRegistration = async () => {
             const submitBtn = document.getElementById('submitBtn');
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
+            const birthDate = document.getElementById('birthDate').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -899,6 +1345,11 @@
 
             if (!validateEmail(email)) {
                 showError('Invalid email format');
+                return;
+            }
+
+            if (!validateBirthDate(birthDate)) {
+                showError('Invalid birth date');
                 return;
             }
 
@@ -919,29 +1370,39 @@
                 // PASO 1: Nakama Authentication
                 log('Step 1', 'Authenticating with Nakama...');
                 await registerWithNakama(email, password, username);
-                showSuccess('✓ Account created! Saving profile...');
+                showSuccess('✓ Account created! Updating profile...');
 
-                // PASO 2: Guardar perfil en Storage
+                appState.birthDate = birthDate;
+
+                // PASO 2: Actualizar Display Name
+                await updateNakamaDisplayName(username);
+
+                // PASO 3: Crear estadísticas de jugador
+                await createPlayerStats();
+
+                // PASO 4: Guardar perfil completo en Storage
                 let profileData = {
                     username: username,
                     email: email,
+                    birthDate: birthDate,
                     createdAt: new Date().toISOString(),
                     mode: appState.selectedMode
                 };
 
-                // PASO 3: Web3 - Firmar con Phantom
+                // PASO 5: Web3 - Firmar con Phantom
                 if (appState.selectedMode === 'web3') {
-                    log('Step 2', 'Initiating Phantom connection...');
+                    log('Step 5', 'Initiating Phantom connection...');
 
                     try {
                         const walletAddress = await connectPhantomWallet();
                         if (!walletAddress) {
-                            log('Web3', 'Esperando deep link de Phantom en móvil...');
+                            log('Web3', 'Esperando conexión desde Phantom en móvil...');
+                            // En móvil, el deep link toma control
                             return;
                         }
 
                         const messageToSign = `Sign in to MemeticWars - ${Date.now()}`;
-                        log('Step 3', 'Signing message with Phantom...');
+                        log('Step 6', 'Signing message with Phantom...');
                         const signature = await signMessageWithPhantom(messageToSign);
 
                         profileData.walletAddress = walletAddress;
@@ -957,31 +1418,17 @@
                     }
                 }
 
-                // PASO 4: Guardar en Nakama Storage
-                log('Step 4', 'Saving profile to Nakama Storage...');
+                // PASO 7: Guardar perfil en Nakama Storage
+                log('Step 7', 'Saving profile to Nakama Storage...');
                 await saveProfileToStorage(profileData);
 
                 showSuccess(`✓ Registration complete! Welcome to MemeticWars, ${username}!`);
                 log('Registration Complete', appState);
 
-                // Mostrar resumen
+                // Mostrar pantalla de éxito
                 setTimeout(() => {
-                    alert(`
-Registration Successful!
-
-Username: ${username}
-Email: ${email}
-Mode: ${appState.selectedMode.toUpperCase()}
-${appState.walletAddress ? `Wallet: ${appState.walletAddress}` : ''}
-
-Token: ${appState.authToken.substring(0, 20)}...
-
-Redirigiendo al juego...
-                    `);
-
-                    // Redirigir al juego
-                    window.location.href = `${CONFIG.GAME_ID}://game/start?token=${appState.authToken}`;
-                }, 2000);
+                    showSuccessScreen();
+                }, 1500);
 
             } catch (error) {
                 showError(error.message);
@@ -995,13 +1442,14 @@ Redirigiendo al juego...
         log('App Started', {
             nakama_url: CONFIG.NAKAMA_URL,
             is_mobile: isMobile(),
-            version: '1.0.0'
+            version: '2.0.0'
         });
 
-        // Verificar si viene del deep link de Phantom
-        if (new URLSearchParams(window.location.search).get('phantom_connected')) {
-            log('Deep Link', 'Phantom connected via deep link');
-            showToast('Phantom wallet connected!');
+        // Verificar si es deep link de Phantom
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('source') === 'phantom') {
+            log('Deep Link', 'Abierto desde Phantom');
+            showToast('Abierto en navegador de Phantom');
         }
     </script>
 </body>
