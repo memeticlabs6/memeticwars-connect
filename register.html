@@ -1,200 +1,101 @@
-// ──────────────────────────────────────────────────────────────────────────
-// CONFIGURACIÓN DE INFRAESTRUCTURA (TÚNEL NGROK)
-// ──────────────────────────────────────────────────────────────────────────
-const NAKAMA_URL = "https://creature-visiting-playback.ngrok-free.dev"; 
-const NAKAMA_SERVER_KEY = "defaultkey";
-let isWeb3Mode = false;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeticWars - Registration Hub</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a1f0f; font-family: -apple-system, sans-serif; color: white; padding: 20px; }
+  h1 { font-size: 26px; margin-bottom: 4px; text-align: center; }
+  .subtitle { color: #aaa; font-size: 14px; margin-bottom: 24px; text-align: center; }
+  .step { display: none; width: 100%; max-width: 360px; flex-direction: column; gap: 12px; }
+  .step.active { display: flex; }
+  .field-label { font-size: 12px; color: #8fd68f; margin-bottom: 2px; margin-left: 2px; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  input, select { width: 100%; background: #16241a; border: 1px solid #2d4030; border-radius: 10px; padding: 14px; color: white; font-size: 16px; }
+  .toggle-pw { position: absolute; right: 12px; cursor: pointer; font-size: 18px; color: #666; }
+  .choice-card { background: #16241a; border: 2px solid #2d4030; border-radius: 14px; padding: 20px; cursor: pointer; text-align: center; margin-bottom: 12px; }
+  .error { color: #ff6b6b; font-size: 13px; text-align: center; }
+  .status { color: #ab9ff2; font-size: 14px; text-align: center; }
+  button { background: linear-gradient(135deg, #ab9ff2, #6c4fd6); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; }
+</style>
+</head>
+<body>
 
-// Comprobación segura de billetera integrada
-function hasPhantomWallet() {
-    return (window.phantom?.solana?.isPhantom || ('solana' in window && window.solana?.isPhantom));
-}
+<h1>🪖 MemeticWars</h1>
+<p class="subtitle">Create your account</p>
 
-// Obtener proveedor de Solana
-function getProvider() {
-    if ('phantom' in window) return window.phantom?.solana;
-    if ('solana' in window) return window.solana;
-    return null;
-}
+<div class="step active" id="step0">
+  <div class="choice-card" id="choice-free">
+    <div class="choice-title">Standard Account</div>
+    <div class="choice-desc">No wallet required.</div>
+  </div>
+  <div class="choice-card" id="choice-web3">
+    <div class="choice-title">Web3 Account</div>
+    <div class="choice-desc">Connect Phantom Wallet.</div>
+  </div>
+  <div class="error" id="step0-error"></div>
+</div>
 
-// Cambiar de pantallas respetando tus clases ".step" y ".active" originales
-function goToStep(stepNumber) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById('step' + stepNumber);
-    if (target) target.classList.add('active');
-}
+<div class="step" id="step1">
+  <div class="field-label">Username</div><input type="text" id="username">
+  <div class="field-label">Email</div><input type="email" id="email">
+  <div class="field-label">Password</div>
+  <div class="input-wrap"><input type="password" id="password"><span class="toggle-pw" id="toggle-pw1">👁</span></div>
+  <div class="field-label">Confirm</div>
+  <div class="input-wrap"><input type="password" id="confirm-password"><span class="toggle-pw" id="toggle-pw2">👁</span></div>
+  <div class="field-label">Date of Birth</div><input type="date" id="dob">
+  <button id="register-btn">Complete Registration</button>
+  <button id="back-step0-btn" style="background:none;">Back</button>
+  <div class="status" id="status-text"></div>
+</div>
 
-// ──────────────────────────────────────────────────────────────────────────
-// INICIALIZACIÓN Y CONFIGURACIÓN DE EVENTOS (DOM)
-// ──────────────────────────────────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-    
-    // Si el usuario es redirigido desde la app móvil de Phantom con ?web3=1
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('web3') === '1') {
-        isWeb3Mode = true;
-        const regBtn = document.getElementById('register-btn');
-        if (regBtn) regBtn.textContent = "Connect & Register";
-        goToStep(1);
-    }
+<div class="step" id="step2">
+  <div style="text-align:center;">✅</div>
+  <p id="success-title"></p>
+  <button onclick="window.location.href='memeticwars://onconnect'">Return to Game</button>
+</div>
 
-    // Configurar restricción de edad (+18) en tu input original
-    const dobInput = document.getElementById('dob');
-    if (dobInput) {
-        const maxDob = new Date();
-        maxDob.setFullYear(maxDob.getFullYear() - 18);
-        dobInput.max = maxDob.toISOString().split('T')[0];
-    }
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script>
+  const NAKAMA_URL = "https://creature-visiting-playback.ngrok-free.dev";
+  let isWeb3Mode = false;
 
-    // Lógica nativa de tus ojitos para mostrar/ocultar contraseñas
-    const t1 = document.getElementById('toggle-pw1');
-    const t2 = document.getElementById('toggle-pw2');
-    if (t1) t1.addEventListener('click', () => { const i = document.getElementById('password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
-    if (t2) t2.addEventListener('click', () => { const i = document.getElementById('confirm-password'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; });
+  function goToStep(s) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById('step' + s).classList.add('active');
+  }
 
-    // Botón para regresar al menú de los rectángulos
-    const backBtn = document.getElementById('back-step0-btn');
-    if (backBtn) backBtn.addEventListener('click', () => { goToStep(0); });
+  document.getElementById('choice-free').addEventListener('click', () => { isWeb3Mode = false; goToStep(1); });
+  document.getElementById('choice-web3').addEventListener('click', () => { 
+    isWeb3Mode = true; 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile && !window.solana?.isPhantom) {
+      window.location.href = "https://phantom.app/ul/browse/" + encodeURIComponent(window.location.href);
+    } else { goToStep(1); }
+  });
 
-    // Click en la opción 1: Standard Account (Web2)
-    const choiceFree = document.getElementById('choice-free');
-    if (choiceFree) {
-        choiceFree.addEventListener('click', () => {
-            isWeb3Mode = false;
-            const regBtn = document.getElementById('register-btn');
-            if (regBtn) regBtn.textContent = "Complete Registration";
-            goToStep(1);
-        });
-    }
-
-    // Click en la opción 2: Web3 Account (Manejo de Deep Link Móvil / PC)
-    const choiceWeb3Link = document.getElementById('choice-web3-link');
-    if (choiceWeb3Link) {
-        choiceWeb3Link.addEventListener('click', (e) => {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const hasWallet = hasPhantomWallet();
-
-            if (isMobile && !hasWallet) {
-                e.preventDefault(); 
-                const statusErr = document.getElementById('step0-error');
-                if (statusErr) statusErr.textContent = "Opening Phantom Wallet...";
-                
-                // Enlace universal para forzar la apertura de la app de Phantom
-                const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html?web3=1";
-                const phantomDeepLink = "https://phantom.app/ul/browse/" + encodeURIComponent(targetUrl) + "?ref=" + encodeURIComponent("https://memeticlabs6.github.io");
-                
-                window.location.href = phantomDeepLink;
-            } else {
-                e.preventDefault();
-                isWeb3Mode = true;
-                const regBtn = document.getElementById('register-btn');
-                if (regBtn) regBtn.textContent = "Connect & Register";
-                goToStep(1);
-            }
-        });
-    }
-});
-
-// ──────────────────────────────────────────────────────────────────────────
-// PROCESAMIENTO DEL FORMULARIO (PETICIONES HTTP A NAKAMA VIA NGROK)
-// ──────────────────────────────────────────────────────────────────────────
-const regBtn = document.getElementById('register-btn');
-if (regBtn) {
-    regBtn.addEventListener('click', async () => {
-        const username = document.getElementById('username').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        const confirmPassword = document.getElementById('confirm-password').value.trim();
-        const dob = document.getElementById('dob').value;
-        const statusEl = document.getElementById('status-text');
-
-        if (!username || !email || !password || !confirmPassword || !dob) {
-            if (statusEl) statusEl.textContent = 'Please fill out all fields.';
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            if (statusEl) statusEl.textContent = 'Passwords do not match.';
-            return;
-        }
-
-        if (statusEl) statusEl.textContent = 'Processing registration...';
-
-        try {
-            const basicAuth = btoa(NAKAMA_SERVER_KEY + ':');
-            const resp = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true&username=${encodeURIComponent(username)}`, {
-                method: 'POST',
-                headers: { 'Authorization': 'Basic ' + basicAuth, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, password: password })
-            });
-
-            const data = await resp.json();
-            if (!resp.ok) throw new Error(data.message || 'Registration failed.');
-            const token = data.token;
-
-            await fetch(`${NAKAMA_URL}/v2/storage`, {
-                method: 'PUT',
-                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    objects: [{
-                        collection: "profiles",
-                        key: "userData",
-                        permission_read: 1,
-                        permission_write: 1,
-                        value: JSON.stringify({ dob: dob, registeredAt: new Date().toISOString() })
-                    }]
-                })
-            });
-
-            if (isWeb3Mode) {
-                const provider = getProvider();
-                if (!provider) throw new Error('Phantom Wallet provider is not available.');
-
-                if (statusEl) statusEl.textContent = 'Connecting Wallet...';
-                const connectResp = await provider.connect();
-                const publicKeyStr = connectResp.publicKey.toString();
-
-                if (statusEl) statusEl.textContent = 'Generating authentication signature...';
-                
-                const messageText = `Sign this message to bind your wallet to MemeticWars account: ${username}`;
-                const encodedMessage = new TextEncoder().encode(messageText);
-                
-                const signedMessageResp = await provider.signMessage(encodedMessage, "utf8");
-                const signatureBase64 = btoa(String.fromCharCode.apply(null, signedMessageResp.signature));
-
-                if (statusEl) statusEl.textContent = 'Binding wallet structure to infrastructure node...';
-                
-                const writeResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        objects: [{
-                            collection: "wallets",
-                            key: "solana",
-                            permission_read: 1,
-                            permission_write: 0, 
-                            value: JSON.stringify({
-                                publicKey: publicKeyStr,
-                                signature: signatureBase64,
-                                message: messageText
-                            })
-                        }]
-                    })
-                });
-
-                if (!writeResp.ok) throw new Error('Failed to bind your digital wallet.');
-            }
-
-            const succTitle = document.getElementById('success-title');
-            const succDesc = document.getElementById('success-desc');
-            
-            if (succTitle) succTitle.textContent = isWeb3Mode ? "Web3 Account Secured!" : "Account Created Successfully!";
-            if (succDesc) succDesc.textContent = "Your deployment credentials have been correctly synchronized with the server.";
-            
-            goToStep(2);
-        } catch (error) {
-            console.error(error);
-            if (statusEl) statusEl.textContent = error.message || 'An unexpected error occurred.';
-        }
-    });
-}
+  document.getElementById('register-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('status-text');
+    statusEl.textContent = 'Processing...';
+    try {
+      // 1. Auth simple (simulación de flujo)
+      const res = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Basic ' + btoa('defaultkey:'), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
+      });
+      if (!res.ok) throw new Error("Server connection failed.");
+      
+      if (isWeb3Mode) {
+        const provider = window.solana || window.phantom?.solana;
+        await provider.connect();
+        // Aquí iría la lógica de firma
+      }
+      goToStep(2);
+    } catch (e) { statusEl.textContent = e.message; }
+  });
+</script>
+</body>
+</html>
