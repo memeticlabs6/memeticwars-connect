@@ -126,6 +126,14 @@
 <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
   const NAKAMA_URL = "http://192.168.1.74:7350"; 
+ // Si viene de Phantom con ?web3=1, ir directo al formulario Web3
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('web3') === '1') {
+    isWeb3Mode = true;
+    const regBtn = document.getElementById('register-btn');
+    if (regBtn) regBtn.textContent = "Connect & Register";
+    goToStep(1);
+  }
   const NAKAMA_SERVER_KEY = "defaultkey";
 
   let isWeb3Mode = false;
@@ -200,7 +208,7 @@
         const statusErr = document.getElementById('step0-error');
         if (statusErr) statusErr.textContent = "Opening Phantom Wallet...";
         
-        const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html";
+        const targetUrl = "https://memeticlabs6.github.io/memeticwars-connect/register.html?web3=1";
         const phantomDeepLink = "https://phantom.app/ul/browse/" + encodeURIComponent(targetUrl) + "?ref=" + encodeURIComponent("https://memeticlabs6.github.io");
         
         // 🚀 EL TRUCO: Crear un enlace invisible y simular un clic nativo para evitar el bloqueo del SO
