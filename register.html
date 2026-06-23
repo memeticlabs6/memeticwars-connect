@@ -1186,10 +1186,32 @@
 
         // ==================== EVENT LISTENERS ====================
         document.querySelectorAll('.mode-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', async () => {
+                const mode = card.dataset.mode;
+                
+                // Si es Web3 y MÓVIL, abre Phantom inmediatamente sin mostrar formulario
+                if (mode === 'web3' && isMobile()) {
+                    log('Web3 Mobile', 'Abriendo Phantom directamente...');
+                    
+                    try {
+                        const currentUrl = window.location.href.split('?')[0]; // URL limpia sin parámetros
+                        const deepLink = `https://phantom.app/ul/browse/${encodeURIComponent(
+                            currentUrl + '?mode=web3&source=phantom'
+                        )}`;
+                        
+                        log('Deep Link', deepLink);
+                        window.location.href = deepLink;
+                        return; // No continuar con el resto
+                    } catch (error) {
+                        log('Deep Link Error', error.message);
+                        showError('Error opening Phantom. Please try again.');
+                    }
+                }
+                
+                // Si no es Web3 móvil, mostrar formulario normalmente
                 document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
-                showRegistrationForm(card.dataset.mode);
+                showRegistrationForm(mode);
             });
         });
 
@@ -1445,11 +1467,22 @@
             version: '2.0.0'
         });
 
-        // Verificar si es deep link de Phantom
+        // Verificar si viene del deep link de Phantom
         const params = new URLSearchParams(window.location.search);
-        if (params.get('source') === 'phantom') {
-            log('Deep Link', 'Abierto desde Phantom');
-            showToast('Abierto en navegador de Phantom');
+        const isFromPhantom = params.get('source') === 'phantom';
+        const modeFromUrl = params.get('mode');
+
+        if (isFromPhantom && modeFromUrl === 'web3') {
+            log('Phantom Deep Link Detected', 'Abierto desde navegador interno de Phantom');
+            showToast('✓ Opened in Phantom Browser');
+            
+            // Mostrar formulario Web3 automáticamente
+            document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+            const web3Card = document.querySelector('[data-mode="web3"]');
+            if (web3Card) {
+                web3Card.classList.add('active');
+            }
+            showRegistrationForm('web3');
         }
     </script>
 </body>
