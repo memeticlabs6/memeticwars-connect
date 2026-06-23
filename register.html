@@ -57,7 +57,6 @@
   <button onclick="window.location.href='memeticwars://onconnect'">Return to Game</button>
 </div>
 
-<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
 <script>
   const NAKAMA_URL = "https://creature-visiting-playback.ngrok-free.dev";
   let isWeb3Mode = false;
@@ -67,69 +66,38 @@
     document.getElementById('step' + s).classList.add('active');
   }
 
-  document.getElementById('choice-free').addEventListener('click', () => { isWeb3Mode = false; goToStep(1); });
-  document.getElementById('choice-web3').addEventListener('click', () => { 
-    isWeb3Mode = true; 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile && !window.solana?.isPhantom) {
-      window.location.href = "https://phantom.app/ul/browse/" + encodeURIComponent(window.location.href);
-    } else { goToStep(1); }
-  });
+  document.getElementById('choice-free').onclick = () => { isWeb3Mode = false; goToStep(1); };
+  document.getElementById('choice-web3').onclick = () => { isWeb3Mode = true; goToStep(1); };
 
-  document.getElementById('register-btn').addEventListener('click', async () => {
+  document.getElementById('register-btn').onclick = async () => {
     const statusEl = document.getElementById('status-text');
-    statusEl.textContent = 'Procesando...';
-    
+    statusEl.textContent = 'Processing...';
     try {
-      // 1. Autenticación (Lo que YA funciona)
       const res = await fetch(`${NAKAMA_URL}/v2/account/authenticate/email?create=true`, {
         method: 'POST',
         headers: { 'Authorization': 'Basic ' + btoa('defaultkey:'), 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
       });
-      
-      if (!res.ok) throw new Error("Error en Login: " + res.status);
+      if (!res.ok) throw new Error("Auth failed");
       const authData = await res.json();
-      const token = authData.token;
-
-      // 2. Intentar guardar en Storage (Aquí es donde está el fallo)
-      const storageResp = await fetch(`${NAKAMA_URL}/v2/storage`, {
+      
+      // Intentar guardar datos
+      const storageRes = await fetch(`${NAKAMA_URL}/v2/storage`, {
         method: 'PUT',
-        headers: { 
-          'Authorization': 'Bearer ' + token, 
-          'Content-Type': 'application/json' 
-        },
+        headers: { 'Authorization': 'Bearer ' + authData.token, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          objects: [{
-            collection: "profiles",
-            key: "userData",
-            value: JSON.stringify({ username: document.getElementById('username').value, dob: document.getElementById('dob').value }),
-            permission_read: 1,
-            permission_write: 1
-          }]
+          objects: [{ collection: "profiles", key: "info", value: JSON.stringify({ username: document.getElementById('username').value, dob: document.getElementById('dob').value }), permission_read: 1, permission_write: 1 }]
         })
       });
 
-      // ESTO ES LO QUE NOS VA A DAR LA PISTA
-      if (!storageResp.ok) {
-        const errorData = await storageResp.json();
-        console.error("DETALLE DEL ERROR NAKAMA:", errorData);
-        alert("ERROR DE NAKAMA: " + JSON.stringify(errorData));
-        throw new Error("No se pudo guardar el perfil.");
+      if (!storageRes.ok) {
+        const err = await storageRes.json();
+        alert("Error de Nakama al guardar datos: " + JSON.stringify(err));
+      } else {
+        goToStep(2);
       }
-
-      // 3. Firma (Si es Web3)
-      if (isWeb3Mode) {
-        const provider = window.solana || window.phantom?.solana;
-        if (!provider) throw new Error("Phantom no detectado.");
-        await provider.connect();
-        const msg = new TextEncoder().encode("Registro en MemeticWars");
-        await provider.signMessage(msg, "utf8");
-      }
-      
-      goToStep(2);
-    } catch (e) { 
-      statusEl.textContent = "Error: " + e.message;
-      console.error(e);
-    }
-  });
+    } catch (e) { statusEl.textContent = e.message; }
+  };
+</script>
+</body>
+</html>
