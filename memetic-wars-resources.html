@@ -29,13 +29,209 @@
             background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
             color: #fff;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* MAIN CONTENT */
+        /* ==================== NAVBAR ==================== */
+        .memetic-navbar {
+            background: rgba(15, 58, 95, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-logo:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-login, .btn-signup {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover, .btn-signup:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-menu-container {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu-container.show {
+            display: flex;
+        }
+
+        .user-button {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .user-button:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-pfp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(15, 58, 95, 0.95);
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            min-width: 250px;
+            display: none;
+            z-index: 100;
+            animation: slideDown 0.3s ease;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-info {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gold);
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .user-info-label {
+            color: var(--color-gray-lighter);
+        }
+
+        .user-info-value {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .dropdown-action {
+            padding: 12px 16px;
+            color: var(--color-gold);
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 1px solid var(--color-gold);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-action:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .dropdown-action:last-child {
+            border-bottom: none;
+        }
+
+        /* ==================== CONTENT ==================== */
         .main-content {
+            flex: 1;
             max-width: 1400px;
             margin: 0 auto;
             padding: 40px 30px;
+            width: 100%;
         }
 
         .page-title {
@@ -49,61 +245,6 @@
             padding-bottom: 20px;
         }
 
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--color-gold);
-            padding-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid var(--color-gold);
-            color: var(--color-gold);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            border-radius: 2px 2px 0 0;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-
-        .tab:hover {
-            background: rgba(212, 175, 55, 0.2);
-        }
-
-        .tab.active {
-            background: rgba(212, 175, 55, 0.3);
-            border-bottom: 2px solid var(--color-gold);
-        }
-
-        /* CONTENT SECTIONS */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* LEADERBOARD TABLE */
         .table-container {
             background: rgba(15, 58, 95, 0.2);
             border: 1px solid var(--color-gold);
@@ -186,7 +327,6 @@
             font-size: 1.1rem;
         }
 
-        /* LOADING STATE */
         .loading {
             text-align: center;
             padding: 40px;
@@ -208,19 +348,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--color-gray-lighter);
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        /* INFO BOX */
         .info-box {
             background: rgba(15, 58, 95, 0.2);
             border: 1px solid var(--color-gold);
@@ -230,7 +357,6 @@
             color: var(--color-gray-lighter);
         }
 
-        /* REFRESH BUTTON */
         .refresh-btn {
             background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
             border: 1px solid var(--color-gold);
@@ -250,24 +376,25 @@
             box-shadow: 0 0 20px var(--color-gold);
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
+            .memetic-navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: space-between;
+                gap: 15px;
+            }
+
             .main-content {
                 padding: 20px 15px;
             }
 
             .page-title {
                 font-size: 1.8rem;
-            }
-
-            .tabs {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .tab {
-                width: 100%;
-                text-align: center;
             }
 
             table {
@@ -286,93 +413,159 @@
 </head>
 <body>
     <!-- NAVBAR -->
-    <div id="navbar-container"></div>
+    <nav class="memetic-navbar">
+        <div class="navbar-left">
+            <a class="navbar-logo" onclick="goHome()">🧠 MemeticWars</a>
+            <ul class="navbar-menu">
+                <li><a onclick="goToResources()">Resources</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-right">
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn-login" onclick="goToLogin()">Login</button>
+                <button class="btn-signup" onclick="goToSignup()">Sign Up</button>
+            </div>
+
+            <div class="user-menu-container" id="userMenuContainer">
+                <button class="user-button" id="userMenuBtn">
+                    <div class="user-pfp" id="userPfp">👤</div>
+                    <span id="userMenuUsername">User</span>
+                    <span>▼</span>
+                </button>
+
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-info-item">
+                            <span class="user-info-label">Username:</span>
+                            <span class="user-info-value" id="dropdownUsername">-</span>
+                        </div>
+                        <div class="user-info-item">
+                            <span class="user-info-label">Email:</span>
+                            <span class="user-info-value" id="dropdownEmail">-</span>
+                        </div>
+                        <div class="user-info-item" id="walletItem" style="display: none;">
+                            <span class="user-info-label">Wallet:</span>
+                            <span class="user-info-value" id="dropdownWallet">-</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-action" onclick="logout()">🚪 Logout</div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
         <h1 class="page-title">🏆 Game Resources</h1>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <div class="tab active" data-tab="leaderboard">👥 Leaderboard</div>
-            <!-- TODO: Agregar más tabs si necesitas (Tournaments, Events, etc.) -->
+        <div class="info-box">
+            Ranking global de jugadores ordenado por puntos. Actualiza la página para ver las últimas puntuaciones.
         </div>
 
-        <!-- LEADERBOARD TAB -->
-        <div id="leaderboard" class="tab-content show">
-            <div class="info-box">
-                <!-- TODO: Edita esta descripción -->
-                Ranking global de jugadores ordenado por puntos. Actualiza la página para ver las últimas puntuaciones.
-            </div>
+        <button class="refresh-btn" onclick="loadLeaderboard()">🔄 Refresh Rankings</button>
 
-            <button class="refresh-btn" onclick="loadLeaderboard()">🔄 Refresh Rankings</button>
+        <div class="table-container">
+            <table id="leaderboardTable">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">#</th>
+                        <th style="width: 20%;">Usuario</th>
+                        <th style="width: 12%;">Jugadas</th>
+                        <th style="width: 12%;">Ganadas</th>
+                        <th style="width: 12%;">Perdidas</th>
+                        <th style="width: 12%;">Empates</th>
+                        <th style="width: 12%;">Winrate</th>
+                        <th style="width: 10%;">Puntos</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px;">
+                            <div class="spinner"></div>
+                            <span>Cargando rankings...</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-            <div class="table-container">
-                <table id="leaderboardTable">
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">#</th>
-                            <th style="width: 20%;">Usuario</th>
-                            <th style="width: 12%;">Jugadas</th>
-                            <th style="width: 12%;">Ganadas</th>
-                            <th style="width: 12%;">Perdidas</th>
-                            <th style="width: 12%;">Empates</th>
-                            <th style="width: 12%;">Winrate</th>
-                            <th style="width: 10%;">Puntos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px;">
-                                <div class="spinner"></div>
-                                <span>Cargando rankings...</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="info-box" style="margin-top: 30px;">
-                <strong>ℹ️ Nota:</strong> Los puntos se actualizan automáticamente después de cada partida. 
-                Sube en el ranking jugando y ganando contra otros jugadores.
-            </div>
+        <div class="info-box" style="margin-top: 30px;">
+            <strong>ℹ️ Nota:</strong> Los puntos se actualizan automáticamente después de cada partida.
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURACIÓN ====================
         const CONFIG = {
             NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
             SERVER_KEY: 'defaultkey'
         };
 
-        // ==================== FUNCIONES ====================
-        const log = (title, data) => {
-            console.log(`%c[MemeticWars Resources] ${title}`, 'color: #d4af37; font-weight: bold;', data);
-        };
-
-        // Cargar navbar
-        function loadNavbar() {
-            const navbarPath = 'memetic-wars-navbar.html';
-            fetch(navbarPath)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('navbar-container').innerHTML = html;
-                    // Ejecutar scripts del navbar
-                    const scripts = document.getElementById('navbar-container').querySelectorAll('script');
-                    scripts.forEach(script => {
-                        eval(script.textContent);
-                    });
-                })
-                .catch(error => console.error('Error loading navbar:', error));
+        function goHome() {
+            window.location.href = 'index.html';
         }
 
-        // Cargar leaderboard desde Nakama
+        function goToResources() {
+            window.location.href = 'memetic-wars-resources.html';
+        }
+
+        function goToLogin() {
+            window.location.href = 'memetic-wars-login.html';
+        }
+
+        function goToSignup() {
+            window.location.href = 'memetic-wars-registration.html';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        function initNavbar() {
+            const authToken = localStorage.getItem('authToken');
+            const username = localStorage.getItem('username');
+            const email = localStorage.getItem('email');
+            const walletAddress = localStorage.getItem('walletAddress');
+
+            if (authToken && username) {
+                showUserMenu(username, email, walletAddress);
+            } else {
+                showAuthButtons();
+            }
+        }
+
+        function showAuthButtons() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userMenuContainer').classList.remove('show');
+        }
+
+        function showUserMenu(username, email, wallet) {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userMenuContainer').classList.add('show');
+            document.getElementById('userMenuUsername').textContent = username;
+            document.getElementById('dropdownUsername').textContent = username;
+            document.getElementById('dropdownEmail').textContent = email;
+            document.getElementById('userPfp').textContent = username.charAt(0).toUpperCase();
+
+            if (wallet) {
+                const shortWallet = wallet.substring(0, 3) + '...' + wallet.substring(wallet.length - 3);
+                document.getElementById('walletItem').style.display = 'flex';
+                document.getElementById('dropdownWallet').textContent = shortWallet;
+            }
+        }
+
+        document.getElementById('userMenuBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown').classList.remove('show');
+        });
+
         function loadLeaderboard() {
-            log('Load Leaderboard', 'Obteniendo rankings...');
             const tbody = document.getElementById('leaderboardBody');
-            
-            // Mostrar loading
             tbody.innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 40px;">
@@ -382,10 +575,6 @@
                 </tr>
             `;
 
-            // TODO: Reemplaza con tu token si es necesario
-            // Por ahora, mostramos datos ficticios como demo
-            // En producción, harías un fetch a Nakama para obtener player_stats
-
             setTimeout(() => {
                 const mockData = [
                     { rank: 1, username: 'PepeChad', jugadas: 45, ganadas: 38, perdidas: 7, empates: 0, winrate: 84.4, puntos: 2450 },
@@ -393,14 +582,12 @@
                     { rank: 3, username: 'MemeLord', jugadas: 38, ganadas: 32, perdidas: 6, empates: 0, winrate: 84.2, puntos: 1980 },
                     { rank: 4, username: 'BasedGamer', jugadas: 61, ganadas: 43, perdidas: 18, empates: 0, winrate: 70.5, puntos: 1850 },
                     { rank: 5, username: 'ChadEnergy', jugadas: 29, ganadas: 24, perdidas: 5, empates: 0, winrate: 82.8, puntos: 1650 },
-                    // TODO: Agregar más usuarios reales del Nakama cuando tengas datos
                 ];
 
                 displayLeaderboard(mockData);
-            }, 500); // Simular delay de red
+            }, 500);
         }
 
-        // Mostrar leaderboard en tabla
         function displayLeaderboard(data) {
             const tbody = document.getElementById('leaderboardBody');
             tbody.innerHTML = '';
@@ -409,10 +596,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 60px;">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">🏜️</div>
-                                <p>No hay datos de ranking disponibles aún</p>
-                            </div>
+                            No hay datos de ranking disponibles aún
                         </td>
                     </tr>
                 `;
@@ -422,7 +606,6 @@
             data.forEach((player) => {
                 const row = document.createElement('tr');
                 
-                // Determinar clase de rango (oro, plata, bronce)
                 let rankClass = '';
                 if (player.rank === 1) rankClass = 'top1';
                 else if (player.rank === 2) rankClass = 'top2';
@@ -442,37 +625,11 @@
                 `;
                 tbody.appendChild(row);
             });
-
-            log('Leaderboard Loaded', `${data.length} jugadores cargados`);
         }
 
-        // Tabs functionality
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.dataset.tab;
-                
-                // Actualizar tabs activos
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Mostrar contenido
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('show');
-                });
-                document.getElementById(tabId).classList.add('show');
-
-                // Si es leaderboard, cargar datos
-                if (tabId === 'leaderboard') {
-                    loadLeaderboard();
-                }
-            });
-        });
-
-        // ==================== INIT ====================
         window.addEventListener('DOMContentLoaded', () => {
-            loadNavbar();
+            initNavbar();
             loadLeaderboard();
-            log('Resources Page Ready', 'Página cargada');
         });
     </script>
 </body>
