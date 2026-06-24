@@ -30,14 +30,100 @@
             color: #fff;
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 400px;
-            width: 100%;
+        /* ==================== NAVBAR ==================== */
+        .memetic-navbar {
+            background: rgba(15, 58, 95, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-logo:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-login, .btn-signup {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover, .btn-signup:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        /* ==================== LOGIN CONTENT ==================== */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
         .login-box {
@@ -45,6 +131,8 @@
             border: 2px solid var(--color-gold);
             padding: 40px;
             border-radius: 4px;
+            max-width: 400px;
+            width: 100%;
         }
 
         .login-header {
@@ -73,7 +161,6 @@
             font-style: italic;
         }
 
-        /* FORM */
         .form-group {
             margin-bottom: 20px;
         }
@@ -131,7 +218,6 @@
             text-shadow: 0 0 10px var(--color-gold);
         }
 
-        /* MESSAGES */
         .error-message {
             background: rgba(231, 76, 60, 0.2);
             border: 1px solid var(--color-danger);
@@ -153,7 +239,6 @@
             75% { transform: translateX(5px); }
         }
 
-        /* BUTTONS */
         .login-btn {
             width: 100%;
             padding: 12px;
@@ -195,7 +280,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* LINKS */
         .login-links {
             margin-top: 20px;
             text-align: center;
@@ -218,14 +302,17 @@
             text-decoration: underline;
         }
 
-        .divider {
-            color: var(--color-gray-lighter);
-            font-size: 0.8rem;
-            margin: 10px 0;
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 600px) {
+            .memetic-navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
             .login-box {
                 padding: 30px 20px;
             }
@@ -241,7 +328,25 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- NAVBAR -->
+    <nav class="memetic-navbar">
+        <div class="navbar-left">
+            <a class="navbar-logo" onclick="goHome()">🧠 MemeticWars</a>
+            <ul class="navbar-menu">
+                <li><a onclick="goToResources()">Resources</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-right">
+            <div class="auth-buttons">
+                <button class="btn-login" onclick="goToLogin()">Login</button>
+                <button class="btn-signup" onclick="goToSignup()">Sign Up</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN CONTENT -->
+    <div class="login-wrapper">
         <div class="login-box">
             <div class="login-header">
                 <div class="login-logo">🧠</div>
@@ -249,10 +354,8 @@
                 <p class="login-subtitle">Enter the meme arena</p>
             </div>
 
-            <!-- ERROR MESSAGE -->
             <div id="errorMessage" class="error-message"></div>
 
-            <!-- LOGIN FORM -->
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email</label>
@@ -280,13 +383,11 @@
                 <button type="submit" class="login-btn" id="loginBtn">Login</button>
             </form>
 
-            <!-- LINKS -->
             <div class="login-links">
                 <p style="color: var(--color-gray-lighter); font-size: 0.85rem; margin-bottom: 15px;">
-                    <!-- TODO: Agregar "Forgot password" si lo implementas -->
                     ¿No tienes cuenta?
                 </p>
-                <a href="memetic-wars-registration-v2.html" class="login-link">
+                <a href="#" class="login-link" onclick="goToSignup(); return false;">
                     📝 Crear nueva cuenta
                 </a>
             </div>
@@ -294,22 +395,31 @@
     </div>
 
     <script>
-        // ==================== CONFIGURACIÓN ====================
         const CONFIG = {
             NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
             SERVER_KEY: 'defaultkey'
         };
 
-        // ==================== UTILIDADES ====================
-        const log = (title, data) => {
-            console.log(`%c[MemeticWars Login] ${title}`, 'color: #d4af37; font-weight: bold;', data);
-        };
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function goToResources() {
+            window.location.href = 'memetic-wars-resources.html';
+        }
+
+        function goToLogin() {
+            window.location.href = 'memetic-wars-login.html';
+        }
+
+        function goToSignup() {
+            window.location.href = 'memetic-wars-registration.html';
+        }
 
         const showError = (message) => {
             const errorEl = document.getElementById('errorMessage');
             errorEl.textContent = message;
             errorEl.classList.add('show');
-            log('ERROR', message);
             setTimeout(() => errorEl.classList.remove('show'), 5000);
         };
 
@@ -317,11 +427,8 @@
             return btoa(`${CONFIG.SERVER_KEY}:`);
         };
 
-        // ==================== AUTENTICACIÓN ====================
         const loginUser = async (email, password) => {
             try {
-                log('Login Attempt', email);
-
                 const response = await fetch(
                     `${CONFIG.NAKAMA_URL}/v2/account/authenticate/email`,
                     {
@@ -339,35 +446,26 @@
                 );
 
                 if (!response.ok) {
-                    const errorData = await response.json();
                     throw new Error('Email o contraseña incorrectos');
                 }
 
                 const data = await response.json();
                 
-                // Guardar datos en localStorage
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('userId', data.user_id);
                 localStorage.setItem('username', data.user.username);
                 localStorage.setItem('email', data.user.email);
-                
-                log('Login Success', data.user.username);
 
-                // Obtener información de perfil
-                await fetchUserProfile(data.token, data.user.username);
-
-                // Redirigir a recursos
+                await fetchUserProfile(data.token);
                 window.location.href = 'memetic-wars-resources.html';
 
             } catch (error) {
-                log('Login Error', error.message);
                 showError('❌ ' + error.message);
             }
         };
 
-        const fetchUserProfile = async (token, username) => {
+        const fetchUserProfile = async (token) => {
             try {
-                // TODO: Obtener modo (standard/web3), PFP, wallet si tiene
                 const response = await fetch(
                     `${CONFIG.NAKAMA_URL}/v2/storage/objects/profiles/info`,
                     {
@@ -383,15 +481,13 @@
                         const profile = JSON.parse(data.objects[0].value);
                         localStorage.setItem('userMode', profile.mode || 'standard');
                         localStorage.setItem('walletAddress', profile.walletAddress || '');
-                        localStorage.setItem('userPfp', profile.pfp || '');
                     }
                 }
             } catch (error) {
-                log('Profile Fetch', 'No profile data found, that\'s ok');
+                console.log('Profile fetch ok');
             }
         };
 
-        // ==================== EVENT LISTENERS ====================
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -427,18 +523,13 @@
             }
         });
 
-        // Verificar si ya está logueado
         window.addEventListener('DOMContentLoaded', () => {
             const authToken = localStorage.getItem('authToken');
             if (authToken) {
-                // Ya está logueado, redirigir a resources
                 window.location.href = 'memetic-wars-resources.html';
             }
-            
-            log('Login Page Ready', 'Página cargada');
         });
 
-        // Enter key
         document.getElementById('password').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 document.getElementById('loginForm').dispatchEvent(new Event('submit'));
