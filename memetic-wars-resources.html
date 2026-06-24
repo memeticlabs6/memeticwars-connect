@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeticWars - Resources & Leaderboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0f3a5f;
+            --color-gold: #d4af37;
+            --color-dark: #1a1a1a;
+            --color-gray: #2c2c2c;
+            --color-gray-light: #4a4a4a;
+            --color-gray-lighter: #6a6a6a;
+            --color-bg: #0d0d0d;
+            --color-border: #d4af37;
+            --color-success: #2ecc71;
+            --color-danger: #e74c3c;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--color-gold);
+            margin-bottom: 40px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--color-gold);
+            padding-bottom: 20px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--color-gold);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            border-radius: 2px 2px 0 0;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .tab:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .tab.active {
+            background: rgba(212, 175, 55, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+        }
+
+        /* CONTENT SECTIONS */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* LEADERBOARD TABLE */
+        .table-container {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(15, 58, 95, 0.4);
+            color: var(--color-gold);
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid var(--color-gold);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        tr:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .rank {
+            color: var(--color-gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .rank.top1 {
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+        }
+
+        .rank.top2 {
+            color: #C0C0C0;
+            text-shadow: 0 0 10px #C0C0C0;
+        }
+
+        .rank.top3 {
+            color: #CD7F32;
+            text-shadow: 0 0 10px #CD7F32;
+        }
+
+        .username {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .wins {
+            color: var(--color-success);
+            font-weight: bold;
+        }
+
+        .losses {
+            color: var(--color-danger);
+            font-weight: bold;
+        }
+
+        .winrate {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .points {
+            color: var(--color-gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* LOADING STATE */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-gold);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--color-gold);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-gray-lighter);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            color: var(--color-gray-lighter);
+        }
+
+        /* REFRESH BUTTON */
+        .refresh-btn {
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .tab {
+                width: 100%;
+                text-align: center;
+            }
+
+            table {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 10px 5px;
+            }
+
+            .rank {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <div id="navbar-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <h1 class="page-title">🏆 Game Resources</h1>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" data-tab="leaderboard">👥 Leaderboard</div>
+            <!-- TODO: Agregar más tabs si necesitas (Tournaments, Events, etc.) -->
+        </div>
+
+        <!-- LEADERBOARD TAB -->
+        <div id="leaderboard" class="tab-content show">
+            <div class="info-box">
+                <!-- TODO: Edita esta descripción -->
+                Ranking global de jugadores ordenado por puntos. Actualiza la página para ver las últimas puntuaciones.
+            </div>
+
+            <button class="refresh-btn" onclick="loadLeaderboard()">🔄 Refresh Rankings</button>
+
+            <div class="table-container">
+                <table id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">#</th>
+                            <th style="width: 20%;">Usuario</th>
+                            <th style="width: 12%;">Jugadas</th>
+                            <th style="width: 12%;">Ganadas</th>
+                            <th style="width: 12%;">Perdidas</th>
+                            <th style="width: 12%;">Empates</th>
+                            <th style="width: 12%;">Winrate</th>
+                            <th style="width: 10%;">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px;">
+                                <div class="spinner"></div>
+                                <span>Cargando rankings...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box" style="margin-top: 30px;">
+                <strong>ℹ️ Nota:</strong> Los puntos se actualizan automáticamente después de cada partida. 
+                Sube en el ranking jugando y ganando contra otros jugadores.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        const CONFIG = {
+            NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
+            SERVER_KEY: 'defaultkey'
+        };
+
+        // ==================== FUNCIONES ====================
+        const log = (title, data) => {
+            console.log(`%c[MemeticWars Resources] ${title}`, 'color: #d4af37; font-weight: bold;', data);
+        };
+
+        // Cargar navbar
+        function loadNavbar() {
+            const navbarPath = 'memetic-wars-navbar.html';
+            fetch(navbarPath)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-container').innerHTML = html;
+                    // Ejecutar scripts del navbar
+                    const scripts = document.getElementById('navbar-container').querySelectorAll('script');
+                    scripts.forEach(script => {
+                        eval(script.textContent);
+                    });
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+        }
+
+        // Cargar leaderboard desde Nakama
+        function loadLeaderboard() {
+            log('Load Leaderboard', 'Obteniendo rankings...');
+            const tbody = document.getElementById('leaderboardBody');
+            
+            // Mostrar loading
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <span>Cargando rankings...</span>
+                    </td>
+                </tr>
+            `;
+
+            // TODO: Reemplaza con tu token si es necesario
+            // Por ahora, mostramos datos ficticios como demo
+            // En producción, harías un fetch a Nakama para obtener player_stats
+
+            setTimeout(() => {
+                const mockData = [
+                    { rank: 1, username: 'PepeChad', jugadas: 45, ganadas: 38, perdidas: 7, empates: 0, winrate: 84.4, puntos: 2450 },
+                    { rank: 2, username: 'WojaksRule', jugadas: 52, ganadas: 41, perdidas: 11, empates: 0, winrate: 78.8, puntos: 2120 },
+                    { rank: 3, username: 'MemeLord', jugadas: 38, ganadas: 32, perdidas: 6, empates: 0, winrate: 84.2, puntos: 1980 },
+                    { rank: 4, username: 'BasedGamer', jugadas: 61, ganadas: 43, perdidas: 18, empates: 0, winrate: 70.5, puntos: 1850 },
+                    { rank: 5, username: 'ChadEnergy', jugadas: 29, ganadas: 24, perdidas: 5, empates: 0, winrate: 82.8, puntos: 1650 },
+                    // TODO: Agregar más usuarios reales del Nakama cuando tengas datos
+                ];
+
+                displayLeaderboard(mockData);
+            }, 500); // Simular delay de red
+        }
+
+        // Mostrar leaderboard en tabla
+        function displayLeaderboard(data) {
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 60px;">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🏜️</div>
+                                <p>No hay datos de ranking disponibles aún</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach((player) => {
+                const row = document.createElement('tr');
+                
+                // Determinar clase de rango (oro, plata, bronce)
+                let rankClass = '';
+                if (player.rank === 1) rankClass = 'top1';
+                else if (player.rank === 2) rankClass = 'top2';
+                else if (player.rank === 3) rankClass = 'top3';
+
+                const icon = player.rank <= 3 ? ['🥇', '🥈', '🥉'][player.rank - 1] : '';
+
+                row.innerHTML = `
+                    <td><span class="rank ${rankClass}">${icon} #${player.rank}</span></td>
+                    <td><span class="username">${player.username}</span></td>
+                    <td>${player.jugadas}</td>
+                    <td><span class="wins">${player.ganadas}</span></td>
+                    <td><span class="losses">${player.perdidas}</span></td>
+                    <td>${player.empates}</td>
+                    <td><span class="winrate">${player.winrate.toFixed(1)}%</span></td>
+                    <td><span class="points">${player.puntos}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            log('Leaderboard Loaded', `${data.length} jugadores cargados`);
+        }
+
+        // Tabs functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                
+                // Actualizar tabs activos
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Mostrar contenido
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('show');
+                });
+                document.getElementById(tabId).classList.add('show');
+
+                // Si es leaderboard, cargar datos
+                if (tabId === 'leaderboard') {
+                    loadLeaderboard();
+                }
+            });
+        });
+
+        // ==================== INIT ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadNavbar();
+            loadLeaderboard();
+            log('Resources Page Ready', 'Página cargada');
+        });
+    </script>
+</body>
+</html>

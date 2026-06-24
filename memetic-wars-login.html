@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeticWars - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0f3a5f;
+            --color-gold: #d4af37;
+            --color-dark: #1a1a1a;
+            --color-gray: #2c2c2c;
+            --color-gray-light: #4a4a4a;
+            --color-gray-lighter: #6a6a6a;
+            --color-bg: #0d0d0d;
+            --color-border: #d4af37;
+            --color-danger: #e74c3c;
+            --color-success: #2ecc71;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box {
+            background: rgba(15, 58, 95, 0.2);
+            border: 2px solid var(--color-gold);
+            padding: 40px;
+            border-radius: 4px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: var(--color-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .login-subtitle {
+            color: var(--color-gray-lighter);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-gold);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        input::placeholder {
+            color: var(--color-gray-lighter);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 35px;
+            background: none;
+            border: none;
+            color: var(--color-gold);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+        }
+
+        .toggle-btn:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        /* MESSAGES */
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--color-danger);
+            color: #ff6b6b;
+            padding: 12px 16px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            display: none;
+            animation: shake 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* BUTTONS */
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            color: var(--color-gold);
+            border: 2px solid var(--color-gold);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            box-shadow: 0 0 30px var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--color-gold);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* LINKS */
+        .login-links {
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding-top: 20px;
+        }
+
+        .login-link {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .login-link:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+            text-decoration: underline;
+        }
+
+        .divider {
+            color: var(--color-gray-lighter);
+            font-size: 0.8rem;
+            margin: 10px 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .login-logo {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">🧠</div>
+                <h1 class="login-title">MemeticWars</h1>
+                <p class="login-subtitle">Enter the meme arena</p>
+            </div>
+
+            <!-- ERROR MESSAGE -->
+            <div id="errorMessage" class="error-message"></div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="your@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group password-toggle">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <button type="button" class="toggle-btn" id="togglePassword">Show</button>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Login</button>
+            </form>
+
+            <!-- LINKS -->
+            <div class="login-links">
+                <p style="color: var(--color-gray-lighter); font-size: 0.85rem; margin-bottom: 15px;">
+                    <!-- TODO: Agregar "Forgot password" si lo implementas -->
+                    ¿No tienes cuenta?
+                </p>
+                <a href="memetic-wars-registration-v2.html" class="login-link">
+                    📝 Crear nueva cuenta
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        const CONFIG = {
+            NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
+            SERVER_KEY: 'defaultkey'
+        };
+
+        // ==================== UTILIDADES ====================
+        const log = (title, data) => {
+            console.log(`%c[MemeticWars Login] ${title}`, 'color: #d4af37; font-weight: bold;', data);
+        };
+
+        const showError = (message) => {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            log('ERROR', message);
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        };
+
+        const encodeBasicAuth = () => {
+            return btoa(`${CONFIG.SERVER_KEY}:`);
+        };
+
+        // ==================== AUTENTICACIÓN ====================
+        const loginUser = async (email, password) => {
+            try {
+                log('Login Attempt', email);
+
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/account/authenticate/email`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Basic ${encodeBasicAuth()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                            create: false
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error('Email o contraseña incorrectos');
+                }
+
+                const data = await response.json();
+                
+                // Guardar datos en localStorage
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('userId', data.user_id);
+                localStorage.setItem('username', data.user.username);
+                localStorage.setItem('email', data.user.email);
+                
+                log('Login Success', data.user.username);
+
+                // Obtener información de perfil
+                await fetchUserProfile(data.token, data.user.username);
+
+                // Redirigir a recursos
+                window.location.href = 'memetic-wars-resources.html';
+
+            } catch (error) {
+                log('Login Error', error.message);
+                showError('❌ ' + error.message);
+            }
+        };
+
+        const fetchUserProfile = async (token, username) => {
+            try {
+                // TODO: Obtener modo (standard/web3), PFP, wallet si tiene
+                const response = await fetch(
+                    `${CONFIG.NAKAMA_URL}/v2/storage/objects/profiles/info`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.objects && data.objects.length > 0) {
+                        const profile = JSON.parse(data.objects[0].value);
+                        localStorage.setItem('userMode', profile.mode || 'standard');
+                        localStorage.setItem('walletAddress', profile.walletAddress || '');
+                        localStorage.setItem('userPfp', profile.pfp || '');
+                    }
+                }
+            } catch (error) {
+                log('Profile Fetch', 'No profile data found, that\'s ok');
+            }
+        };
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (!email || !password) {
+                showError('Por favor completa todos los campos');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span>Ingresando...';
+
+            await loginUser(email, password);
+
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = 'Login';
+        });
+
+        document.getElementById('togglePassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('password');
+            const btn = e.target;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        });
+
+        // Verificar si ya está logueado
+        window.addEventListener('DOMContentLoaded', () => {
+            const authToken = localStorage.getItem('authToken');
+            if (authToken) {
+                // Ya está logueado, redirigir a resources
+                window.location.href = 'memetic-wars-resources.html';
+            }
+            
+            log('Login Page Ready', 'Página cargada');
+        });
+
+        // Enter key
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeticWars - The Meme Trading Card Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0f3a5f;
+            --color-gold: #d4af37;
+            --color-dark: #1a1a1a;
+            --color-gray: #2c2c2c;
+            --color-gray-light: #4a4a4a;
+            --color-gray-lighter: #6a6a6a;
+            --color-bg: #0d0d0d;
+            --color-border: #d4af37;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 30px;
+            background: linear-gradient(180deg, rgba(15, 58, 95, 0.5) 0%, rgba(13, 13, 13, 0.8) 100%);
+            border-bottom: 2px solid var(--color-gold);
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid var(--color-gold);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--color-gold);
+            /* TODO: Reemplaza con imagen real (1920x600px recomendado) */
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--color-gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--color-gray-lighter);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            color: var(--color-gold);
+            border: 2px solid var(--color-gold);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 30px var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        /* SECTIONS */
+        .section {
+            padding: 80px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--color-gold);
+            margin-bottom: 40px;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--color-gold);
+            padding-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        /* MEMETIC WARS SECTION */
+        .memetic-content {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 40px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .memetic-content p {
+            font-size: 1.1rem;
+            color: var(--color-gray-lighter);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* CARDS SECTION */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(15, 58, 95, 0.2);
+            border: 2px solid var(--color-gold);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px var(--color-gold);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 300px;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            /* TODO: Reemplaza con imagen real (300x400px) */
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-name {
+            color: var(--color-gold);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .card-rarity {
+            display: inline-block;
+            padding: 5px 10px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .card-desc {
+            color: var(--color-gray-lighter);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* NEWS SECTION */
+        .news-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .news-item {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            border-radius: 4px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 300px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            /* TODO: Reemplaza con imagen real (800x400px) */
+        }
+
+        .news-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .news-date {
+            color: var(--color-gold);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .news-title {
+            color: var(--color-gold);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .news-desc {
+            color: var(--color-gray-lighter);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* DOWNLOADS SECTION */
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .download-card {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 30px;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .download-card:hover {
+            background: rgba(15, 58, 95, 0.4);
+            box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .download-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .download-title {
+            color: var(--color-gold);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .download-link {
+            display: inline-block;
+            color: var(--color-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .download-link:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        /* COMMUNITY SECTION */
+        .community-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .community-link {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .community-link:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .community-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: rgba(15, 58, 95, 0.3);
+            border-top: 2px solid var(--color-gold);
+            padding: 40px 30px;
+            text-align: center;
+            color: var(--color-gray-lighter);
+            margin-top: 80px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: auto;
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-image {
+                height: 250px;
+            }
+
+            .section {
+                padding: 40px 20px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .news-item {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR (incluido desde memetic-wars-navbar.html) -->
+    <div id="navbar-container"></div>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-image">
+                <!-- TODO: Reemplaza con imagen real de 1920x600px -->
+                🎮 MEMETIC WARS
+            </div>
+            <h1>The Meme Trading Card Game</h1>
+            <p>Collecciona, juega y gana con tus memes favoritos. Batalla en tiempo real contra otros jugadores y demuestra quién es el mejor memero.</p>
+            <div class="hero-cta">
+                <button class="btn" onclick="redirectToResources()">Jugar Ahora</button>
+                <button class="btn" onclick="scrollToSection('news')">Últimas Noticias</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEMETIC WARS SECTION -->
+    <section class="section">
+        <h2 class="section-title">Qué es MemeticWars?</h2>
+        <div class="memetic-content">
+            <p>
+                <!-- TODO: Edita esta descripción con la información real de tu juego -->
+                MemeticWars es un juego de cartas coleccionables basado en memes legendarios. 
+                Crea tu deck, batalla contra otros jugadores en tiempo real y sube en el ranking global. 
+                Cada carta tiene atributos únicos y rareza variable.
+            </p>
+            <p>
+                Integrado con Web3 y blockchain de Solana para garantizar la propiedad real de tus cartas NFT.
+                Gana rewards y participa en airdrops exclusivos para los top players.
+            </p>
+        </div>
+    </section>
+
+    <!-- CARDS SECTION -->
+    <section class="section">
+        <h2 class="section-title">Cartas Destacadas</h2>
+        <!-- TODO: Agrega más cartas duplicando este bloque -->
+        <div class="cards-grid">
+            <!-- CARTA 1 -->
+            <div class="card">
+                <div class="card-image">
+                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
+                    👨
+                </div>
+                <div class="card-content">
+                    <div class="card-name">Pepe Chad</div>
+                    <div class="card-rarity">Legendaria</div>
+                    <p class="card-desc">
+                        <!-- TODO: Edita descripción -->
+                        El más basado de los memes. Ataque: 8/10, Defensa: 7/10
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARTA 2 -->
+            <div class="card">
+                <div class="card-image">
+                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
+                    😢
+                </div>
+                <div class="card-content">
+                    <div class="card-name">Wojak</div>
+                    <div class="card-rarity">Rara</div>
+                    <p class="card-desc">
+                        <!-- TODO: Edita descripción -->
+                        Expresión pura de anguish. Ataque: 5/10, Defensa: 8/10
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARTA 3 -->
+            <div class="card">
+                <div class="card-image">
+                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
+                    🎭
+                </div>
+                <div class="card-content">
+                    <div class="card-name">Meme Lord</div>
+                    <div class="card-rarity">Épica</div>
+                    <p class="card-desc">
+                        <!-- TODO: Edita descripción -->
+                        El controlador del tiempo meme. Ataque: 7/10, Defensa: 7/10
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section class="section" id="news">
+        <h2 class="section-title">Últimas Noticias</h2>
+        <div class="news-container">
+            <!-- TODO: Duplica este bloque para agregar más noticias -->
+            <div class="news-item">
+                <div class="news-image">
+                    <!-- TODO: Reemplaza con imagen real de 800x400px -->
+                    📰 NEWS
+                </div>
+                <div class="news-content">
+                    <div class="news-date">Junio 2024</div>
+                    <div class="news-title">Game Launch Coming Soon</div>
+                    <p class="news-desc">
+                        <!-- TODO: Edita esta descripción -->
+                        Nos complace anunciar que MemeticWars se está preparando para su lanzamiento oficial. 
+                        El equipo ha estado trabajando duro para perfeccionar el gameplay y agregar nuevas cartas. 
+                        Estamos listos para revolucionar el mundo de los TCG con memes.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TODO: Agrega más noticias aquí -->
+        </div>
+    </section>
+
+    <!-- DOWNLOADS SECTION -->
+    <section class="section">
+        <h2 class="section-title">Descargas</h2>
+        <div class="downloads-grid">
+            <!-- MOBILE -->
+            <div class="download-card">
+                <div class="download-icon">📱</div>
+                <div class="download-title">iOS</div>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
+                    <!-- TODO: Reemplaza con link real a App Store -->
+                    Disponible próximamente
+                </p>
+                <a href="#" class="download-link" onclick="event.preventDefault()">App Store</a>
+            </div>
+
+            <!-- ANDROID -->
+            <div class="download-card">
+                <div class="download-icon">🤖</div>
+                <div class="download-title">Android</div>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
+                    <!-- TODO: Reemplaza con link real a Google Play -->
+                    Disponible próximamente
+                </p>
+                <a href="#" class="download-link" onclick="event.preventDefault()">Google Play</a>
+            </div>
+
+            <!-- WINDOWS/MAC (Opcional) -->
+            <div class="download-card">
+                <div class="download-icon">💻</div>
+                <div class="download-title">Desktop</div>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
+                    <!-- TODO: Reemplaza con link real -->
+                    Disponible próximamente
+                </p>
+                <a href="#" class="download-link" onclick="event.preventDefault()">Descarga</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMUNITY SECTION -->
+    <section class="section">
+        <h2 class="section-title">Comunidad</h2>
+        <div class="community-links">
+            <!-- TODO: Reemplaza con links reales a tus canales -->
+            <a href="#" class="community-link" onclick="event.preventDefault()">
+                <div class="community-icon">💬</div>
+                Discord
+            </a>
+            <a href="#" class="community-link" onclick="event.preventDefault()">
+                <div class="community-icon">𝕏</div>
+                Twitter
+            </a>
+            <a href="#" class="community-link" onclick="event.preventDefault()">
+                <div class="community-icon">📲</div>
+                Telegram
+            </a>
+            <a href="#" class="community-link" onclick="event.preventDefault()">
+                <div class="community-icon">▶️</div>
+                YouTube
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2024 MemeticWars. All rights reserved. | Built with 🧠 for meme lovers</p>
+    </footer>
+
+    <script>
+        // Cargar navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbarPath = 'memetic-wars-navbar.html';
+            fetch(navbarPath)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-container').innerHTML = html;
+                    // Ejecutar scripts del navbar
+                    const scripts = document.getElementById('navbar-container').querySelectorAll('script');
+                    scripts.forEach(script => {
+                        eval(script.textContent);
+                    });
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+        });
+
+        // Funciones
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function redirectToResources() {
+            window.location.href = 'memetic-wars-resources.html';
+        }
+    </script>
+</body>
+</html>

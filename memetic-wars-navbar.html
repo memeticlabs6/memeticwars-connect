@@ -1,0 +1,437 @@
+<!-- MEMETIC WARS NAVBAR (Reutilizable) -->
+<!-- Incluir en: landing.html, resources.html, login.html, registration.html -->
+
+<style>
+    :root {
+        --color-primary: #0f3a5f;
+        --color-gold: #d4af37;
+        --color-dark: #1a1a1a;
+        --color-gray: #2c2c2c;
+        --color-gray-light: #4a4a4a;
+        --color-gray-lighter: #6a6a6a;
+        --color-bg: #0d0d0d;
+        --color-border: #d4af37;
+        --color-danger: #e74c3c;
+        --color-success: #2ecc71;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Courier New', monospace;
+    }
+
+    /* NAVBAR STYLES */
+    .memetic-navbar {
+        background: rgba(15, 58, 95, 0.3);
+        border-bottom: 2px solid var(--color-gold);
+        padding: 12px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .navbar-logo {
+        font-size: 1.5rem;
+        color: var(--color-gold);
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        /* SUGERIDO: Logo 150x50px */
+    }
+
+    .navbar-logo:hover {
+        text-shadow: 0 0 10px var(--color-gold);
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 20px;
+        list-style: none;
+    }
+
+    .navbar-menu a {
+        color: var(--color-gold);
+        text-decoration: none;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        letter-spacing: 1px;
+    }
+
+    .navbar-menu a:hover {
+        color: #fff;
+        text-shadow: 0 0 10px var(--color-gold);
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* AUTH BUTTONS */
+    .auth-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-login, .btn-signup {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--color-gold);
+        color: var(--color-gold);
+        padding: 8px 16px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        border-radius: 2px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover, .btn-signup:hover {
+        background: rgba(212, 175, 55, 0.2);
+        box-shadow: 0 0 10px var(--color-gold);
+    }
+
+    /* USER MENU */
+    .user-menu-container {
+        position: relative;
+        display: none;
+    }
+
+    .user-menu-container.show {
+        display: flex;
+    }
+
+    .user-button {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--color-gold);
+        color: var(--color-gold);
+        padding: 8px 16px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .user-button:hover {
+        background: rgba(212, 175, 55, 0.2);
+        box-shadow: 0 0 10px var(--color-gold);
+    }
+
+    .user-pfp {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--color-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--color-primary);
+        /* SUGERIDO: Mostrar imagen 40x40px */
+    }
+
+    .user-dropdown {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background: rgba(15, 58, 95, 0.95);
+        border: 1px solid var(--color-gold);
+        border-radius: 2px;
+        min-width: 250px;
+        display: none;
+        z-index: 100;
+        animation: slideDown 0.3s ease;
+    }
+
+    .user-dropdown.show {
+        display: block;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .user-info {
+        padding: 16px;
+        border-bottom: 1px solid var(--color-gold);
+    }
+
+    .user-info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+    }
+
+    .user-info-label {
+        color: var(--color-gray-lighter);
+    }
+
+    .user-info-value {
+        color: var(--color-gold);
+        font-weight: bold;
+    }
+
+    .dropdown-action {
+        padding: 12px 16px;
+        color: var(--color-gold);
+        cursor: pointer;
+        text-align: center;
+        border-bottom: 1px solid var(--color-gold);
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .dropdown-action:hover {
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .dropdown-action:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-action.danger {
+        color: var(--color-danger);
+    }
+
+    .dropdown-action.danger:hover {
+        background: rgba(231, 76, 60, 0.1);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .memetic-navbar {
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px 15px;
+        }
+
+        .navbar-left {
+            width: 100%;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .navbar-menu {
+            gap: 10px;
+        }
+
+        .navbar-menu a {
+            font-size: 0.8rem;
+        }
+
+        .user-dropdown {
+            right: auto;
+            left: 0;
+            min-width: auto;
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- NAVBAR HTML -->
+<nav class="memetic-navbar">
+    <div class="navbar-left">
+        <!-- LOGO -->
+        <a href="memetic-wars-landing.html" class="navbar-logo">
+            🧠 MemeticWars
+        </a>
+        
+        <!-- MENU -->
+        <ul class="navbar-menu">
+            <!-- TODO: Agregar más links si necesitas otras páginas -->
+            <li><a href="memetic-wars-resources.html">Resources</a></li>
+        </ul>
+    </div>
+
+    <div class="navbar-right">
+        <!-- AUTH BUTTONS (No logueado) -->
+        <div class="auth-buttons" id="authButtons">
+            <button class="btn-login" onclick="redirectToLogin()">Login</button>
+            <button class="btn-signup" onclick="redirectToSignup()">Sign Up</button>
+        </div>
+
+        <!-- USER MENU (Logueado) -->
+        <div class="user-menu-container" id="userMenuContainer">
+            <button class="user-button" id="userMenuBtn">
+                <div class="user-pfp" id="userPfp">👤</div>
+                <span id="userMenuUsername">User</span>
+                <span>▼</span>
+            </button>
+
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Username:</span>
+                        <span class="user-info-value" id="dropdownUsername">-</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Email:</span>
+                        <span class="user-info-value" id="dropdownEmail">-</span>
+                    </div>
+                    <div class="user-info-item" id="walletItem" style="display: none;">
+                        <span class="user-info-label">Wallet:</span>
+                        <span class="user-info-value" id="dropdownWallet">-</span>
+                    </div>
+                </div>
+                <div class="dropdown-action" id="editProfileAction" onclick="openEditProfile()">
+                    ✏️ Edit Profile
+                </div>
+                <div class="dropdown-action" id="connectWalletAction" style="display: none;" onclick="openConnectWallet()">
+                    🔗 Connect Wallet
+                </div>
+                <div class="dropdown-action danger" onclick="logout()">
+                    🚪 Logout
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // ==================== CONFIGURACIÓN ====================
+    const CONFIG = {
+        NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
+        SERVER_KEY: 'defaultkey'
+    };
+
+    // ==================== FUNCIONES ====================
+    const log = (title, data) => {
+        console.log(`%c[MemeticWars Navbar] ${title}`, 'color: #d4af37; font-weight: bold;', data);
+    };
+
+    const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Redirigir a Login
+    function redirectToLogin() {
+        window.location.href = 'memetic-wars-login.html';
+    }
+
+    // Redirigir a Sign Up
+    function redirectToSignup() {
+        window.location.href = 'memetic-wars-registration-v2.html';
+    }
+
+    // Logout
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+        log('Logout', 'Usuario desconectado');
+    }
+
+    // TODO: Implementar openEditProfile()
+    function openEditProfile() {
+        log('Edit Profile', 'Función no implementada aún');
+        alert('Edit Profile coming soon!');
+        // Aquí irá modal para editar username y PFP
+    }
+
+    // TODO: Implementar openConnectWallet()
+    function openConnectWallet() {
+        log('Connect Wallet', 'Abriendo conexión de wallet');
+        // Aquí irá lógica similar a "Sign up with Web3"
+        // Deep link a Phantom si mobile, extension si desktop
+    }
+
+    // ==================== INICIALIZAR ====================
+    function initNavbar() {
+        const authToken = localStorage.getItem('authToken');
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+        const userMode = localStorage.getItem('userMode'); // 'standard' o 'web3'
+        const userPfp = localStorage.getItem('userPfp'); // URL de PFP
+        const walletAddress = localStorage.getItem('walletAddress');
+
+        if (authToken && username) {
+            // Usuario logueado
+            showUserMenu(username, email, userMode, userPfp, walletAddress);
+        } else {
+            // Usuario NO logueado
+            showAuthButtons();
+        }
+    }
+
+    function showAuthButtons() {
+        document.getElementById('authButtons').style.display = 'flex';
+        document.getElementById('userMenuContainer').classList.remove('show');
+    }
+
+    function showUserMenu(username, email, mode, pfp, wallet) {
+        document.getElementById('authButtons').style.display = 'none';
+        document.getElementById('userMenuContainer').classList.add('show');
+        document.getElementById('userMenuUsername').textContent = username;
+        document.getElementById('dropdownUsername').textContent = username;
+        document.getElementById('dropdownEmail').textContent = email;
+
+        // Mostrar PFP
+        if (pfp) {
+            document.getElementById('userPfp').style.backgroundImage = `url('${pfp}')`;
+            document.getElementById('userPfp').style.backgroundSize = 'cover';
+            document.getElementById('userPfp').textContent = '';
+        } else {
+            // TODO: Mostrar inicial del usuario o PFP por defecto
+            document.getElementById('userPfp').textContent = username.charAt(0).toUpperCase();
+        }
+
+        // Mostrar wallet si tiene
+        if (wallet) {
+            const shortWallet = wallet.substring(0, 3) + '...' + wallet.substring(wallet.length - 3);
+            document.getElementById('walletItem').style.display = 'flex';
+            document.getElementById('dropdownWallet').textContent = shortWallet;
+            document.getElementById('connectWalletAction').style.display = 'none';
+        } else if (mode === 'standard') {
+            // Standard sin wallet = mostrar botón conectar
+            document.getElementById('connectWalletAction').style.display = 'block';
+            document.getElementById('walletItem').style.display = 'none';
+        } else {
+            document.getElementById('walletItem').style.display = 'none';
+            document.getElementById('connectWalletAction').style.display = 'none';
+        }
+
+        log('Navbar Loaded', { username, email, mode });
+    }
+
+    // Toggle dropdown
+    document.getElementById('userMenuBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('userDropdown').classList.toggle('show');
+    });
+
+    // Cerrar dropdown al hacer click afuera
+    document.addEventListener('click', () => {
+        document.getElementById('userDropdown').classList.remove('show');
+    });
+
+    // Inicializar al cargar
+    window.addEventListener('DOMContentLoaded', initNavbar);
+</script>
