@@ -29,7 +29,199 @@
             min-height: 100vh;
         }
 
-        /* HERO SECTION */
+        /* ==================== NAVBAR ==================== */
+        .memetic-navbar {
+            background: rgba(15, 58, 95, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-logo:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-login, .btn-signup {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover, .btn-signup:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-menu-container {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu-container.show {
+            display: flex;
+        }
+
+        .user-button {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .user-button:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-pfp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(15, 58, 95, 0.95);
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            min-width: 250px;
+            display: none;
+            z-index: 100;
+            animation: slideDown 0.3s ease;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-info {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gold);
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .user-info-label {
+            color: var(--color-gray-lighter);
+        }
+
+        .user-info-value {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .dropdown-action {
+            padding: 12px 16px;
+            color: var(--color-gold);
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 1px solid var(--color-gold);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-action:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .dropdown-action:last-child {
+            border-bottom: none;
+        }
+
+        /* ==================== LANDING CONTENT ==================== */
         .hero {
             min-height: 60vh;
             display: flex;
@@ -58,7 +250,6 @@
             justify-content: center;
             font-size: 3rem;
             color: var(--color-gold);
-            /* TODO: Reemplaza con imagen real (1920x600px recomendado) */
         }
 
         .hero h1 {
@@ -104,7 +295,6 @@
             transform: translateY(-2px);
         }
 
-        /* SECTIONS */
         .section {
             padding: 80px 30px;
             max-width: 1200px;
@@ -122,7 +312,6 @@
             letter-spacing: 2px;
         }
 
-        /* MEMETIC WARS SECTION */
         .memetic-content {
             background: rgba(15, 58, 95, 0.2);
             border: 1px solid var(--color-gold);
@@ -138,7 +327,6 @@
             margin-bottom: 20px;
         }
 
-        /* CARDS SECTION */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -167,7 +355,6 @@
             align-items: center;
             justify-content: center;
             font-size: 4rem;
-            /* TODO: Reemplaza con imagen real (300x400px) */
         }
 
         .card-content {
@@ -200,7 +387,6 @@
             line-height: 1.5;
         }
 
-        /* NEWS SECTION */
         .news-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -233,7 +419,6 @@
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            /* TODO: Reemplaza con imagen real (800x400px) */
         }
 
         .news-content {
@@ -263,7 +448,6 @@
             font-size: 0.95rem;
         }
 
-        /* DOWNLOADS SECTION */
         .downloads-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -314,7 +498,6 @@
             box-shadow: 0 0 10px var(--color-gold);
         }
 
-        /* COMMUNITY SECTION */
         .community-links {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -345,7 +528,6 @@
             margin-bottom: 10px;
         }
 
-        /* FOOTER */
         .footer {
             background: rgba(15, 58, 95, 0.3);
             border-top: 2px solid var(--color-gold);
@@ -355,8 +537,23 @@
             margin-top: 80px;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
+            .memetic-navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: space-between;
+                gap: 15px;
+            }
+
+            .navbar-menu a {
+                font-size: 0.8rem;
+            }
+
             .hero {
                 min-height: auto;
                 padding: 40px 20px;
@@ -364,10 +561,6 @@
 
             .hero h1 {
                 font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
             }
 
             .hero-image {
@@ -401,20 +594,57 @@
     </style>
 </head>
 <body>
-    <!-- NAVBAR (incluido desde memetic-wars-navbar.html) -->
-    <div id="navbar-container"></div>
+    <!-- NAVBAR -->
+    <nav class="memetic-navbar">
+        <div class="navbar-left">
+            <a class="navbar-logo" onclick="goHome()">🧠 MemeticWars</a>
+            <ul class="navbar-menu">
+                <li><a onclick="goToResources()">Resources</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-right">
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn-login" onclick="goToLogin()">Login</button>
+                <button class="btn-signup" onclick="goToSignup()">Sign Up</button>
+            </div>
+
+            <div class="user-menu-container" id="userMenuContainer">
+                <button class="user-button" id="userMenuBtn">
+                    <div class="user-pfp" id="userPfp">👤</div>
+                    <span id="userMenuUsername">User</span>
+                    <span>▼</span>
+                </button>
+
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-info-item">
+                            <span class="user-info-label">Username:</span>
+                            <span class="user-info-value" id="dropdownUsername">-</span>
+                        </div>
+                        <div class="user-info-item">
+                            <span class="user-info-label">Email:</span>
+                            <span class="user-info-value" id="dropdownEmail">-</span>
+                        </div>
+                        <div class="user-info-item" id="walletItem" style="display: none;">
+                            <span class="user-info-label">Wallet:</span>
+                            <span class="user-info-value" id="dropdownWallet">-</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-action" onclick="logout()">🚪 Logout</div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-image">
-                <!-- TODO: Reemplaza con imagen real de 1920x600px -->
-                🎮 MEMETIC WARS
-            </div>
+            <div class="hero-image">🎮 MEMETIC WARS</div>
             <h1>The Meme Trading Card Game</h1>
             <p>Collecciona, juega y gana con tus memes favoritos. Batalla en tiempo real contra otros jugadores y demuestra quién es el mejor memero.</p>
             <div class="hero-cta">
-                <button class="btn" onclick="redirectToResources()">Jugar Ahora</button>
+                <button class="btn" onclick="goToResources()">Jugar Ahora</button>
                 <button class="btn" onclick="scrollToSection('news')">Últimas Noticias</button>
             </div>
         </div>
@@ -424,69 +654,39 @@
     <section class="section">
         <h2 class="section-title">Qué es MemeticWars?</h2>
         <div class="memetic-content">
-            <p>
-                <!-- TODO: Edita esta descripción con la información real de tu juego -->
-                MemeticWars es un juego de cartas coleccionables basado en memes legendarios. 
-                Crea tu deck, batalla contra otros jugadores en tiempo real y sube en el ranking global. 
-                Cada carta tiene atributos únicos y rareza variable.
-            </p>
-            <p>
-                Integrado con Web3 y blockchain de Solana para garantizar la propiedad real de tus cartas NFT.
-                Gana rewards y participa en airdrops exclusivos para los top players.
-            </p>
+            <p>MemeticWars es un juego de cartas coleccionables basado en memes legendarios. Crea tu deck, batalla contra otros jugadores en tiempo real y sube en el ranking global. Cada carta tiene atributos únicos y rareza variable.</p>
+            <p>Integrado con Web3 y blockchain de Solana para garantizar la propiedad real de tus cartas NFT. Gana rewards y participa en airdrops exclusivos para los top players.</p>
         </div>
     </section>
 
     <!-- CARDS SECTION -->
     <section class="section">
         <h2 class="section-title">Cartas Destacadas</h2>
-        <!-- TODO: Agrega más cartas duplicando este bloque -->
         <div class="cards-grid">
-            <!-- CARTA 1 -->
             <div class="card">
-                <div class="card-image">
-                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
-                    👨
-                </div>
+                <div class="card-image">👨</div>
                 <div class="card-content">
                     <div class="card-name">Pepe Chad</div>
                     <div class="card-rarity">Legendaria</div>
-                    <p class="card-desc">
-                        <!-- TODO: Edita descripción -->
-                        El más basado de los memes. Ataque: 8/10, Defensa: 7/10
-                    </p>
+                    <p class="card-desc">El más basado de los memes. Ataque: 8/10, Defensa: 7/10</p>
                 </div>
             </div>
 
-            <!-- CARTA 2 -->
             <div class="card">
-                <div class="card-image">
-                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
-                    😢
-                </div>
+                <div class="card-image">😢</div>
                 <div class="card-content">
                     <div class="card-name">Wojak</div>
                     <div class="card-rarity">Rara</div>
-                    <p class="card-desc">
-                        <!-- TODO: Edita descripción -->
-                        Expresión pura de anguish. Ataque: 5/10, Defensa: 8/10
-                    </p>
+                    <p class="card-desc">Expresión pura de anguish. Ataque: 5/10, Defensa: 8/10</p>
                 </div>
             </div>
 
-            <!-- CARTA 3 -->
             <div class="card">
-                <div class="card-image">
-                    <!-- TODO: Reemplaza con imagen real de 300x400px -->
-                    🎭
-                </div>
+                <div class="card-image">🎭</div>
                 <div class="card-content">
                     <div class="card-name">Meme Lord</div>
                     <div class="card-rarity">Épica</div>
-                    <p class="card-desc">
-                        <!-- TODO: Edita descripción -->
-                        El controlador del tiempo meme. Ataque: 7/10, Defensa: 7/10
-                    </p>
+                    <p class="card-desc">El controlador del tiempo meme. Ataque: 7/10, Defensa: 7/10</p>
                 </div>
             </div>
         </div>
@@ -496,25 +696,14 @@
     <section class="section" id="news">
         <h2 class="section-title">Últimas Noticias</h2>
         <div class="news-container">
-            <!-- TODO: Duplica este bloque para agregar más noticias -->
             <div class="news-item">
-                <div class="news-image">
-                    <!-- TODO: Reemplaza con imagen real de 800x400px -->
-                    📰 NEWS
-                </div>
+                <div class="news-image">📰 NEWS</div>
                 <div class="news-content">
                     <div class="news-date">Junio 2024</div>
                     <div class="news-title">Game Launch Coming Soon</div>
-                    <p class="news-desc">
-                        <!-- TODO: Edita esta descripción -->
-                        Nos complace anunciar que MemeticWars se está preparando para su lanzamiento oficial. 
-                        El equipo ha estado trabajando duro para perfeccionar el gameplay y agregar nuevas cartas. 
-                        Estamos listos para revolucionar el mundo de los TCG con memes.
-                    </p>
+                    <p class="news-desc">Nos complace anunciar que MemeticWars se está preparando para su lanzamiento oficial. El equipo ha estado trabajando duro para perfeccionar el gameplay y agregar nuevas cartas. Estamos listos para revolucionar el mundo de los TCG con memes.</p>
                 </div>
             </div>
-
-            <!-- TODO: Agrega más noticias aquí -->
         </div>
     </section>
 
@@ -522,36 +711,24 @@
     <section class="section">
         <h2 class="section-title">Descargas</h2>
         <div class="downloads-grid">
-            <!-- MOBILE -->
             <div class="download-card">
                 <div class="download-icon">📱</div>
                 <div class="download-title">iOS</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
-                    <!-- TODO: Reemplaza con link real a App Store -->
-                    Disponible próximamente
-                </p>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
                 <a href="#" class="download-link" onclick="event.preventDefault()">App Store</a>
             </div>
 
-            <!-- ANDROID -->
             <div class="download-card">
                 <div class="download-icon">🤖</div>
                 <div class="download-title">Android</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
-                    <!-- TODO: Reemplaza con link real a Google Play -->
-                    Disponible próximamente
-                </p>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
                 <a href="#" class="download-link" onclick="event.preventDefault()">Google Play</a>
             </div>
 
-            <!-- WINDOWS/MAC (Opcional) -->
             <div class="download-card">
                 <div class="download-icon">💻</div>
                 <div class="download-title">Desktop</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">
-                    <!-- TODO: Reemplaza con link real -->
-                    Disponible próximamente
-                </p>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
                 <a href="#" class="download-link" onclick="event.preventDefault()">Descarga</a>
             </div>
         </div>
@@ -561,7 +738,6 @@
     <section class="section">
         <h2 class="section-title">Comunidad</h2>
         <div class="community-links">
-            <!-- TODO: Reemplaza con links reales a tus canales -->
             <a href="#" class="community-link" onclick="event.preventDefault()">
                 <div class="community-icon">💬</div>
                 Discord
@@ -587,30 +763,76 @@
     </footer>
 
     <script>
-        // Cargar navbar
-        document.addEventListener('DOMContentLoaded', () => {
-            const navbarPath = 'memetic-wars-navbar.html';
-            fetch(navbarPath)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('navbar-container').innerHTML = html;
-                    // Ejecutar scripts del navbar
-                    const scripts = document.getElementById('navbar-container').querySelectorAll('script');
-                    scripts.forEach(script => {
-                        eval(script.textContent);
-                    });
-                })
-                .catch(error => console.error('Error loading navbar:', error));
-        });
+        // ==================== FUNCIONES ====================
+        function goHome() {
+            window.location.href = 'index.html';
+        }
 
-        // Funciones
+        function goToResources() {
+            window.location.href = 'memetic-wars-resources.html';
+        }
+
+        function goToLogin() {
+            window.location.href = 'memetic-wars-login.html';
+        }
+
+        function goToSignup() {
+            window.location.href = 'memetic-wars-registration.html';
+        }
+
         function scrollToSection(sectionId) {
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
         }
 
-        function redirectToResources() {
-            window.location.href = 'memetic-wars-resources.html';
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
         }
+
+        // ==================== NAVBAR INIT ====================
+        function initNavbar() {
+            const authToken = localStorage.getItem('authToken');
+            const username = localStorage.getItem('username');
+            const email = localStorage.getItem('email');
+            const walletAddress = localStorage.getItem('walletAddress');
+
+            if (authToken && username) {
+                showUserMenu(username, email, walletAddress);
+            } else {
+                showAuthButtons();
+            }
+        }
+
+        function showAuthButtons() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userMenuContainer').classList.remove('show');
+        }
+
+        function showUserMenu(username, email, wallet) {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userMenuContainer').classList.add('show');
+            document.getElementById('userMenuUsername').textContent = username;
+            document.getElementById('dropdownUsername').textContent = username;
+            document.getElementById('dropdownEmail').textContent = email;
+            document.getElementById('userPfp').textContent = username.charAt(0).toUpperCase();
+
+            if (wallet) {
+                const shortWallet = wallet.substring(0, 3) + '...' + wallet.substring(wallet.length - 3);
+                document.getElementById('walletItem').style.display = 'flex';
+                document.getElementById('dropdownWallet').textContent = shortWallet;
+            }
+        }
+
+        document.getElementById('userMenuBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown').classList.remove('show');
+        });
+
+        window.addEventListener('DOMContentLoaded', initNavbar);
     </script>
 </body>
 </html>
