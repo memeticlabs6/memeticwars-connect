@@ -1475,10 +1475,15 @@
             version: '2.0.0'
         });
 
-        // Verificar si viene del deep link de Phantom
-        const params = new URLSearchParams(window.location.search);
-        const isFromPhantom = params.get('source') === 'phantom';
-        const modeFromUrl = params.get('mode');
+        // Detectar parámetro mode para abrir directo
+const params = new URLSearchParams(window.location.search);
+const modeParam = params.get('mode'); // ?mode=web3 o ?mode=standard
+
+if (modeParam === 'web3') {
+    showRegistrationForm('web3');
+} else if (modeParam === 'standard') {
+    showRegistrationForm('standard');
+}
 
         if (isFromPhantom && modeFromUrl === 'web3') {
             log('Phantom Deep Link Detected', 'Abierto desde navegador interno de Phantom');
