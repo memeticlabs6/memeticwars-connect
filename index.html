@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -563,6 +563,10 @@
                 font-size: 2rem;
             }
 
+            .hero p {
+                font-size: 1rem;
+            }
+
             .hero-image {
                 height: 250px;
             }
@@ -631,6 +635,7 @@
                             <span class="user-info-value" id="dropdownWallet">-</span>
                         </div>
                     </div>
+                    <div class="dropdown-action" onclick="goToProfile()">👤 Profile</div>
                     <div class="dropdown-action" onclick="logout()">🚪 Logout</div>
                 </div>
             </div>
@@ -642,33 +647,32 @@
         <div class="hero-content">
             <div class="hero-image">🎮 MEMETIC WARS</div>
             <h1>The Meme Trading Card Game</h1>
-            <p>Collecciona, juega y gana con tus memes favoritos. Batalla en tiempo real contra otros jugadores y demuestra quién es el mejor memero.</p>
+            <p>Collect, play and earn with your favorite memes. Battle other players in real-time and prove who is the best memelord.</p>
             <div class="hero-cta">
-                <button class="btn" onclick="goToResources()">Jugar Ahora</button>
-                <button class="btn" onclick="scrollToSection('news')">Últimas Noticias</button>
+                <button class="btn" onclick="scrollToSection('news')">Latest News</button>
             </div>
         </div>
     </section>
 
     <!-- MEMETIC WARS SECTION -->
     <section class="section">
-        <h2 class="section-title">Qué es MemeticWars?</h2>
+        <h2 class="section-title">What is MemeticWars?</h2>
         <div class="memetic-content">
-            <p>MemeticWars es un juego de cartas coleccionables basado en memes legendarios. Crea tu deck, batalla contra otros jugadores en tiempo real y sube en el ranking global. Cada carta tiene atributos únicos y rareza variable.</p>
-            <p>Integrado con Web3 y blockchain de Solana para garantizar la propiedad real de tus cartas NFT. Gana rewards y participa en airdrops exclusivos para los top players.</p>
+            <p>MemeticWars is a collectible card game based on legendary memes. Create your deck, battle other players in real-time and climb the global ranking. Each card has unique attributes and variable rarity.</p>
+            <p>Integrated with Web3 and Solana blockchain to guarantee real ownership of your NFT cards. Earn rewards and participate in exclusive airdrops for top players.</p>
         </div>
     </section>
 
     <!-- CARDS SECTION -->
     <section class="section">
-        <h2 class="section-title">Cartas Destacadas</h2>
+        <h2 class="section-title">Featured Cards</h2>
         <div class="cards-grid">
             <div class="card">
                 <div class="card-image">👨</div>
                 <div class="card-content">
                     <div class="card-name">Pepe Chad</div>
-                    <div class="card-rarity">Legendaria</div>
-                    <p class="card-desc">El más basado de los memes. Ataque: 8/10, Defensa: 7/10</p>
+                    <div class="card-rarity">Legendary</div>
+                    <p class="card-desc">The most based of all memes. Attack: 8/10, Defense: 7/10</p>
                 </div>
             </div>
 
@@ -676,8 +680,8 @@
                 <div class="card-image">😢</div>
                 <div class="card-content">
                     <div class="card-name">Wojak</div>
-                    <div class="card-rarity">Rara</div>
-                    <p class="card-desc">Expresión pura de anguish. Ataque: 5/10, Defensa: 8/10</p>
+                    <div class="card-rarity">Rare</div>
+                    <p class="card-desc">Pure expression of anguish. Attack: 5/10, Defense: 8/10</p>
                 </div>
             </div>
 
@@ -685,8 +689,8 @@
                 <div class="card-image">🎭</div>
                 <div class="card-content">
                     <div class="card-name">Meme Lord</div>
-                    <div class="card-rarity">Épica</div>
-                    <p class="card-desc">El controlador del tiempo meme. Ataque: 7/10, Defensa: 7/10</p>
+                    <div class="card-rarity">Epic</div>
+                    <p class="card-desc">The controller of meme time. Attack: 7/10, Defense: 7/10</p>
                 </div>
             </div>
         </div>
@@ -694,14 +698,14 @@
 
     <!-- NEWS SECTION -->
     <section class="section" id="news">
-        <h2 class="section-title">Últimas Noticias</h2>
+        <h2 class="section-title">Latest News</h2>
         <div class="news-container">
             <div class="news-item">
                 <div class="news-image">📰 NEWS</div>
                 <div class="news-content">
-                    <div class="news-date">Junio 2024</div>
+                    <div class="news-date">June 2024</div>
                     <div class="news-title">Game Launch Coming Soon</div>
-                    <p class="news-desc">Nos complace anunciar que MemeticWars se está preparando para su lanzamiento oficial. El equipo ha estado trabajando duro para perfeccionar el gameplay y agregar nuevas cartas. Estamos listos para revolucionar el mundo de los TCG con memes.</p>
+                    <p class="news-desc">We are pleased to announce that MemeticWars is preparing for its official launch. The team has been working hard to perfect the gameplay and add new cards. We are ready to revolutionize the world of TCG with memes.</p>
                 </div>
             </div>
         </div>
@@ -709,34 +713,34 @@
 
     <!-- DOWNLOADS SECTION -->
     <section class="section">
-        <h2 class="section-title">Descargas</h2>
+        <h2 class="section-title">Downloads</h2>
         <div class="downloads-grid">
             <div class="download-card">
                 <div class="download-icon">📱</div>
                 <div class="download-title">iOS</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Coming Soon</p>
                 <a href="#" class="download-link" onclick="event.preventDefault()">App Store</a>
             </div>
 
             <div class="download-card">
                 <div class="download-icon">🤖</div>
                 <div class="download-title">Android</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Coming Soon</p>
                 <a href="#" class="download-link" onclick="event.preventDefault()">Google Play</a>
             </div>
 
             <div class="download-card">
                 <div class="download-icon">💻</div>
                 <div class="download-title">Desktop</div>
-                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Disponible próximamente</p>
-                <a href="#" class="download-link" onclick="event.preventDefault()">Descarga</a>
+                <p style="color: var(--color-gray-lighter); font-size: 0.9rem; margin-bottom: 15px;">Coming Soon</p>
+                <a href="#" class="download-link" onclick="event.preventDefault()">Download</a>
             </div>
         </div>
     </section>
 
     <!-- COMMUNITY SECTION -->
     <section class="section">
-        <h2 class="section-title">Comunidad</h2>
+        <h2 class="section-title">Community</h2>
         <div class="community-links">
             <a href="#" class="community-link" onclick="event.preventDefault()">
                 <div class="community-icon">💬</div>
@@ -763,7 +767,6 @@
     </footer>
 
     <script>
-        // ==================== FUNCIONES ====================
         function goHome() {
             window.location.href = 'index.html';
         }
@@ -780,6 +783,10 @@
             window.location.href = 'memetic-wars-registration.html';
         }
 
+        function goToProfile() {
+            window.location.href = 'memetic-wars-profile.html';
+        }
+
         function scrollToSection(sectionId) {
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
         }
@@ -789,7 +796,6 @@
             window.location.reload();
         }
 
-        // ==================== NAVBAR INIT ====================
         function initNavbar() {
             const authToken = localStorage.getItem('authToken');
             const username = localStorage.getItem('username');
@@ -823,7 +829,7 @@
             }
         }
 
-        document.getElementById('userMenuBtn').addEventListener('click', (e) => {
+        document.getElementById('userMenuBtn')?.addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('userDropdown').classList.toggle('show');
         });
