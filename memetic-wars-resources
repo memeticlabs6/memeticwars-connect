@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeticWars - User Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0f3a5f;
+            --color-gold: #d4af37;
+            --color-dark: #1a1a1a;
+            --color-gray: #2c2c2c;
+            --color-gray-light: #4a4a4a;
+            --color-gray-lighter: #6a6a6a;
+            --color-bg: #0d0d0d;
+            --color-border: #d4af37;
+            --color-success: #2ecc71;
+            --color-danger: #e74c3c;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-gray) 50%, var(--color-primary) 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== NAVBAR ==================== */
+        .memetic-navbar {
+            background: rgba(15, 58, 95, 0.3);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-logo:hover {
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-button {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .user-button:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px var(--color-gold);
+        }
+
+        .user-pfp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(15, 58, 95, 0.95);
+            border: 1px solid var(--color-gold);
+            border-radius: 2px;
+            min-width: 250px;
+            display: none;
+            z-index: 100;
+            animation: slideDown 0.3s ease;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-info {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gold);
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .user-info-label {
+            color: var(--color-gray-lighter);
+        }
+
+        .user-info-value {
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        .dropdown-action {
+            padding: 12px 16px;
+            color: var(--color-gold);
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 1px solid var(--color-gold);
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .dropdown-action:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .dropdown-action:last-child {
+            border-bottom: none;
+        }
+
+        /* ==================== CONTENT ==================== */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--color-gold);
+            margin-bottom: 40px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* FORMS SECTION */
+        .forms-section {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 30px;
+            border-radius: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-gold);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .form-group input::placeholder {
+            color: var(--color-gray-lighter);
+        }
+
+        .form-title {
+            color: var(--color-gold);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--color-gold);
+            padding-bottom: 10px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, #0f3a5f 0%, #1a5a8f 100%);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-connect:hover {
+            box-shadow: 0 0 15px var(--color-gold);
+        }
+
+        /* STATS CARD */
+        .stats-card {
+            background: rgba(15, 58, 95, 0.2);
+            border: 2px solid var(--color-gold);
+            padding: 30px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .card-pfp {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 3px solid var(--color-gold);
+        }
+
+        .card-username {
+            font-size: 1.8rem;
+            color: var(--color-gold);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .card-rango {
+            color: var(--color-gold);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 2px;
+            border: 1px solid var(--color-gold);
+        }
+
+        .stat-label {
+            color: var(--color-gray-lighter);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: var(--color-gold);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-item.highlight .stat-value {
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+        }
+
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+            padding: 12px;
+            border-radius: 2px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .memetic-navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="memetic-navbar">
+        <div class="navbar-left">
+            <a class="navbar-logo" onclick="goHome()">🧠 MemeticWars</a>
+            <ul class="navbar-menu">
+                <li><a onclick="goToResources()">Resources</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-right">
+            <div style="position: relative;">
+                <button class="user-button" id="userMenuBtn">
+                    <div class="user-pfp" id="userPfp">👤</div>
+                    <span id="userMenuUsername">User</span>
+                    <span>▼</span>
+                </button>
+
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-info-item">
+                            <span class="user-info-label">Username:</span>
+                            <span class="user-info-value" id="dropdownUsername">-</span>
+                        </div>
+                        <div class="user-info-item">
+                            <span class="user-info-label">Email:</span>
+                            <span class="user-info-value" id="dropdownEmail">-</span>
+                        </div>
+                        <div class="user-info-item" id="walletItem" style="display: none;">
+                            <span class="user-info-label">Wallet:</span>
+                            <span class="user-info-value" id="dropdownWallet">-</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-action" onclick="location.href='memetic-wars-profile.html'">👤 Profile</div>
+                    <div class="dropdown-action" onclick="logout()">🚪 Logout</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <h1 class="page-title">User Profile</h1>
+
+        <div class="profile-container">
+            <!-- FORMS SECTION -->
+            <div class="forms-section">
+                <div class="success-message" id="successMessage">✓ Changes saved successfully!</div>
+
+                <!-- WALLET SECTION -->
+                <div class="form-group">
+                    <h3 class="form-title">🔗 Wallet</h3>
+                    <div id="walletDisplay" style="color: var(--color-gold); margin-bottom: 15px;">
+                        <p id="walletStatus">Not connected</p>
+                    </div>
+                    <button class="btn-connect" id="connectWalletBtn" onclick="connectWallet()">Connect Phantom Wallet</button>
+                </div>
+
+                <!-- EMAIL SECTION -->
+                <div class="form-group">
+                    <h3 class="form-title">📧 Email</h3>
+                    <label>Email Address</label>
+                    <input type="email" id="emailInput" placeholder="your@email.com" readonly>
+                </div>
+
+                <!-- CHANGE PASSWORD SECTION -->
+                <div class="form-group">
+                    <h3 class="form-title">🔑 Change Password</h3>
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="••••••••">
+                    
+                    <label style="margin-top: 15px;">New Password</label>
+                    <input type="password" id="newPassword" placeholder="••••••••">
+                    
+                    <label style="margin-top: 15px;">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="••••••••">
+                    
+                    <button class="btn-save" style="margin-top: 20px;" onclick="changePassword()">Update Password</button>
+                </div>
+            </div>
+
+            <!-- STATS CARD -->
+            <div class="stats-card">
+                <div class="card-pfp" id="profilePfp">👤</div>
+                <div class="card-username" id="profileUsername">Username</div>
+                <div class="card-rango" id="profileRango">Unranked</div>
+
+                <div class="stats-grid">
+                    <div class="stat-item highlight">
+                        <div class="stat-label">Ranking</div>
+                        <div class="stat-value" id="profileRanking">#-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Victories</div>
+                        <div class="stat-value" id="profileVictorias">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Defeats</div>
+                        <div class="stat-value" id="profileDerrotas">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Winrate</div>
+                        <div class="stat-value" id="profileWinrate">0%</div>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--color-gold); padding-top: 20px;">
+                    <div class="stat-item">
+                        <div class="stat-label">NFTs Owned</div>
+                        <div class="stat-value" id="profileNFTs">0</div>
+                    </div>
+                    <div class="stat-item" style="margin-top: 15px;">
+                        <div class="stat-label">Last Game</div>
+                        <div class="stat-value" id="profileLastGame" style="font-size: 1rem;">Never</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
+            SERVER_KEY: 'defaultkey'
+        };
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function goToResources() {
+            window.location.href = 'memetic-wars-resources.html';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        function initNavbar() {
+            const authToken = localStorage.getItem('authToken');
+            const username = localStorage.getItem('username');
+            const email = localStorage.getItem('email');
+            const walletAddress = localStorage.getItem('walletAddress');
+
+            if (!authToken || !username) {
+                window.location.href = 'memetic-wars-login.html';
+                return;
+            }
+
+            document.getElementById('userMenuUsername').textContent = username;
+            document.getElementById('dropdownUsername').textContent = username;
+            document.getElementById('dropdownEmail').textContent = email;
+            document.getElementById('userPfp').textContent = username.charAt(0).toUpperCase();
+            document.getElementById('emailInput').value = email;
+
+            if (walletAddress) {
+                const shortWallet = walletAddress.substring(0, 3) + '...' + walletAddress.substring(walletAddress.length - 3);
+                document.getElementById('walletStatus').textContent = 'Connected: ' + shortWallet;
+                document.getElementById('connectWalletBtn').textContent = 'Disconnect Wallet';
+                document.getElementById('connectWalletBtn').onclick = disconnectWallet;
+            }
+
+            loadProfileStats(username);
+        }
+
+        function loadProfileStats(username) {
+            const mockStats = {
+                ranking: 42,
+                victorias: 38,
+                derrotas: 7,
+                winrate: 84.4,
+                rango: 'Gold',
+                nfts: 12,
+                lastGame: 'Today 14:32'
+            };
+
+            document.getElementById('profileUsername').textContent = username;
+            document.getElementById('profilePfp').textContent = username.charAt(0).toUpperCase();
+            document.getElementById('profileRanking').textContent = '#' + mockStats.ranking;
+            document.getElementById('profileVictorias').textContent = mockStats.victorias;
+            document.getElementById('profileDerrotas').textContent = mockStats.derrotas;
+            document.getElementById('profileWinrate').textContent = mockStats.winrate.toFixed(1) + '%';
+            document.getElementById('profileRango').textContent = mockStats.rango;
+            document.getElementById('profileNFTs').textContent = mockStats.nfts;
+            document.getElementById('profileLastGame').textContent = mockStats.lastGame;
+        }
+
+        function connectWallet() {
+            alert('Connect Wallet functionality coming soon!');
+        }
+
+        function disconnectWallet() {
+            localStorage.removeItem('walletAddress');
+            location.reload();
+        }
+
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (newPass.length < 8) {
+                alert('Password must be at least 8 characters');
+                return;
+            }
+
+            // TODO: Implementar cambio de contraseña en Nakama
+            showSuccessMessage();
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function showSuccessMessage() {
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        document.getElementById('userMenuBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('userDropdown').classList.remove('show');
+        });
+
+        window.addEventListener('DOMContentLoaded', initNavbar);
+    </script>
+</body>
+</html>
