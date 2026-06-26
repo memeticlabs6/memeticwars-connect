@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MemeticWars - Resources & Leaderboard</title>
+    <title>MemeticWars - Leaderboard</title>
     <style>
         * {
             margin: 0;
@@ -167,22 +167,10 @@
             min-width: 250px;
             display: none;
             z-index: 100;
-            animation: slideDown 0.3s ease;
         }
 
         .user-dropdown.show {
             display: block;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .user-info {
@@ -237,12 +225,71 @@
         .page-title {
             font-size: 2.5rem;
             color: var(--color-gold);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border-bottom: 2px solid var(--color-gold);
-            padding-bottom: 20px;
+        }
+
+        .search-container {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-gold);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            border-radius: 2px;
+        }
+
+        .search-input::placeholder {
+            color: var(--color-gray-lighter);
+        }
+
+        .search-results {
+            background: rgba(15, 58, 95, 0.2);
+            border: 1px solid var(--color-gold);
+            border-radius: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            margin-top: 5px;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            color: var(--color-gold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .search-result-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
         }
 
         .table-container {
@@ -284,6 +331,12 @@
             color: var(--color-gold);
             font-weight: bold;
             font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rank:hover {
+            text-shadow: 0 0 10px var(--color-gold);
         }
 
         .rank.top1 {
@@ -304,6 +357,12 @@
         .username {
             color: var(--color-gold);
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .username:hover {
+            text-shadow: 0 0 10px var(--color-gold);
         }
 
         .wins {
@@ -325,27 +384,6 @@
             color: var(--color-gold);
             font-weight: bold;
             font-size: 1.1rem;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--color-gold);
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--color-gold);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         .info-box {
@@ -380,13 +418,11 @@
             .memetic-navbar {
                 flex-direction: column;
                 gap: 12px;
-                padding: 12px 15px;
             }
 
             .navbar-left {
                 width: 100%;
                 justify-content: space-between;
-                gap: 15px;
             }
 
             .main-content {
@@ -407,6 +443,10 @@
 
             .rank {
                 font-size: 0.9rem;
+            }
+
+            .search-container {
+                flex-direction: column;
             }
         }
     </style>
@@ -444,11 +484,8 @@
                             <span class="user-info-label">Email:</span>
                             <span class="user-info-value" id="dropdownEmail">-</span>
                         </div>
-                        <div class="user-info-item" id="walletItem" style="display: none;">
-                            <span class="user-info-label">Wallet:</span>
-                            <span class="user-info-value" id="dropdownWallet">-</span>
-                        </div>
                     </div>
+                    <div class="dropdown-action" onclick="goToProfile()">👤 Profile</div>
                     <div class="dropdown-action" onclick="logout()">🚪 Logout</div>
                 </div>
             </div>
@@ -457,41 +494,40 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <h1 class="page-title">🏆 Game Resources</h1>
+        <h1 class="page-title">🏆 Global Leaderboard</h1>
 
         <div class="info-box">
-            Ranking global de jugadores ordenado por puntos. Actualiza la página para ver las últimas puntuaciones.
+            Global ranking of players sorted by points. Use the search below to find your friends.
         </div>
 
-        <button class="refresh-btn" onclick="loadLeaderboard()">🔄 Refresh Rankings</button>
+        <div style="position: relative; margin-bottom: 30px;">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search player by username..." onkeyup="searchPlayers()">
+                <button class="refresh-btn" onclick="loadLeaderboard()">🔄 Refresh</button>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
 
         <div class="table-container">
             <table id="leaderboardTable">
                 <thead>
                     <tr>
-                        <th style="width: 10%;">#</th>
-                        <th style="width: 20%;">Usuario</th>
-                        <th style="width: 12%;">Jugadas</th>
-                        <th style="width: 12%;">Ganadas</th>
-                        <th style="width: 12%;">Perdidas</th>
-                        <th style="width: 12%;">Empates</th>
+                        <th style="width: 8%;">#</th>
+                        <th style="width: 18%;">Username</th>
+                        <th style="width: 12%;">Games</th>
+                        <th style="width: 12%;">Wins</th>
+                        <th style="width: 12%;">Losses</th>
+                        <th style="width: 12%;">Draws</th>
                         <th style="width: 12%;">Winrate</th>
-                        <th style="width: 10%;">Puntos</th>
+                        <th style="width: 10%;">Points</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboardBody">
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 40px;">
-                            <div class="spinner"></div>
-                            <span>Cargando rankings...</span>
-                        </td>
+                        <td colspan="8" style="text-align: center; padding: 40px;">Loading rankings...</td>
                     </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div class="info-box" style="margin-top: 30px;">
-            <strong>ℹ️ Nota:</strong> Los puntos se actualizan automáticamente después de cada partida.
         </div>
     </div>
 
@@ -500,6 +536,8 @@
             NAKAMA_URL: 'https://creature-visiting-playback.ngrok-free.dev',
             SERVER_KEY: 'defaultkey'
         };
+
+        let allPlayers = [];
 
         function goHome() {
             window.location.href = 'index.html';
@@ -517,6 +555,15 @@
             window.location.href = 'memetic-wars-registration.html';
         }
 
+        function goToProfile() {
+            window.location.href = 'memetic-wars-profile.html';
+        }
+
+        function goToPlayerProfile(username) {
+            // TODO: Implementar página de perfil de otro jugador
+            alert('Visit ' + username + '\'s profile (feature coming soon)');
+        }
+
         function logout() {
             localStorage.clear();
             window.location.reload();
@@ -526,10 +573,9 @@
             const authToken = localStorage.getItem('authToken');
             const username = localStorage.getItem('username');
             const email = localStorage.getItem('email');
-            const walletAddress = localStorage.getItem('walletAddress');
 
             if (authToken && username) {
-                showUserMenu(username, email, walletAddress);
+                showUserMenu(username, email);
             } else {
                 showAuthButtons();
             }
@@ -540,19 +586,13 @@
             document.getElementById('userMenuContainer').classList.remove('show');
         }
 
-        function showUserMenu(username, email, wallet) {
+        function showUserMenu(username, email) {
             document.getElementById('authButtons').style.display = 'none';
             document.getElementById('userMenuContainer').classList.add('show');
             document.getElementById('userMenuUsername').textContent = username;
             document.getElementById('dropdownUsername').textContent = username;
             document.getElementById('dropdownEmail').textContent = email;
             document.getElementById('userPfp').textContent = username.charAt(0).toUpperCase();
-
-            if (wallet) {
-                const shortWallet = wallet.substring(0, 3) + '...' + wallet.substring(wallet.length - 3);
-                document.getElementById('walletItem').style.display = 'flex';
-                document.getElementById('dropdownWallet').textContent = shortWallet;
-            }
         }
 
         document.getElementById('userMenuBtn').addEventListener('click', (e) => {
@@ -565,27 +605,26 @@
         });
 
         function loadLeaderboard() {
-            const tbody = document.getElementById('leaderboardBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align: center; padding: 40px;">
-                        <div class="spinner"></div>
-                        <span>Cargando rankings...</span>
-                    </td>
-                </tr>
-            `;
+            const mockData = [
+                { rank: 1, username: 'PepeChad', games: 45, wins: 38, losses: 7, draws: 0, winrate: 84.4, points: 2450 },
+                { rank: 2, username: 'WojaksRule', games: 52, wins: 41, losses: 11, draws: 0, winrate: 78.8, points: 2120 },
+                { rank: 3, username: 'MemeLord', games: 38, wins: 32, losses: 6, draws: 0, winrate: 84.2, points: 1980 },
+                { rank: 4, username: 'BasedGamer', games: 61, wins: 43, losses: 18, draws: 0, winrate: 70.5, points: 1850 },
+                { rank: 5, username: 'ChadEnergy', games: 29, wins: 24, losses: 5, draws: 0, winrate: 82.8, points: 1650 },
+                { rank: 6, username: 'MemeKing99', games: 42, wins: 31, losses: 11, draws: 0, winrate: 73.8, points: 1550 },
+                { rank: 7, username: 'PixelMaster', games: 35, wins: 28, losses: 7, draws: 0, winrate: 80.0, points: 1480 },
+                { rank: 8, username: 'GoldenPepe', games: 48, wins: 35, losses: 13, draws: 0, winrate: 72.9, points: 1420 },
+                { rank: 9, username: 'MemeHunter', games: 56, wins: 39, losses: 17, draws: 0, winrate: 69.6, points: 1350 },
+                { rank: 10, username: 'Wojak2024', games: 32, wins: 26, losses: 6, draws: 0, winrate: 81.2, points: 1280 },
+                { rank: 11, username: 'BasedKing', games: 44, wins: 32, losses: 12, draws: 0, winrate: 72.7, points: 1200 },
+                { rank: 12, username: 'MemeGoblin', games: 39, wins: 29, losses: 10, draws: 0, winrate: 74.4, points: 1150 },
+                { rank: 13, username: 'ChadLord88', games: 50, wins: 36, losses: 14, draws: 0, winrate: 72.0, points: 1100 },
+                { rank: 14, username: 'PepeForever', games: 28, wins: 21, losses: 7, draws: 0, winrate: 75.0, points: 1050 },
+                { rank: 15, username: 'MemeMachine', games: 41, wins: 30, losses: 11, draws: 0, winrate: 73.2, points: 1000 },
+            ];
 
-            setTimeout(() => {
-                const mockData = [
-                    { rank: 1, username: 'PepeChad', jugadas: 45, ganadas: 38, perdidas: 7, empates: 0, winrate: 84.4, puntos: 2450 },
-                    { rank: 2, username: 'WojaksRule', jugadas: 52, ganadas: 41, perdidas: 11, empates: 0, winrate: 78.8, puntos: 2120 },
-                    { rank: 3, username: 'MemeLord', jugadas: 38, ganadas: 32, perdidas: 6, empates: 0, winrate: 84.2, puntos: 1980 },
-                    { rank: 4, username: 'BasedGamer', jugadas: 61, ganadas: 43, perdidas: 18, empates: 0, winrate: 70.5, puntos: 1850 },
-                    { rank: 5, username: 'ChadEnergy', jugadas: 29, ganadas: 24, perdidas: 5, empates: 0, winrate: 82.8, puntos: 1650 },
-                ];
-
-                displayLeaderboard(mockData);
-            }, 500);
+            allPlayers = mockData;
+            displayLeaderboard(mockData);
         }
 
         function displayLeaderboard(data) {
@@ -593,13 +632,7 @@
             tbody.innerHTML = '';
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 60px;">
-                            No hay datos de ranking disponibles aún
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 60px;">No ranking data available</td></tr>`;
                 return;
             }
 
@@ -614,17 +647,40 @@
                 const icon = player.rank <= 3 ? ['🥇', '🥈', '🥉'][player.rank - 1] : '';
 
                 row.innerHTML = `
-                    <td><span class="rank ${rankClass}">${icon} #${player.rank}</span></td>
-                    <td><span class="username">${player.username}</span></td>
-                    <td>${player.jugadas}</td>
-                    <td><span class="wins">${player.ganadas}</span></td>
-                    <td><span class="losses">${player.perdidas}</span></td>
-                    <td>${player.empates}</td>
+                    <td><span class="rank ${rankClass}" onclick="goToPlayerProfile('${player.username}')">${icon} #${player.rank}</span></td>
+                    <td><span class="username" onclick="goToPlayerProfile('${player.username}')">${player.username}</span></td>
+                    <td>${player.games}</td>
+                    <td><span class="wins">${player.wins}</span></td>
+                    <td><span class="losses">${player.losses}</span></td>
+                    <td>${player.draws}</td>
                     <td><span class="winrate">${player.winrate.toFixed(1)}%</span></td>
-                    <td><span class="points">${player.puntos}</span></td>
+                    <td><span class="points">${player.points}</span></td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        function searchPlayers() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (query.length < 2) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            const filtered = allPlayers.filter(p => p.username.toLowerCase().includes(query));
+
+            if (filtered.length === 0) {
+                resultsDiv.innerHTML = '<div class="search-result-item">No players found</div>';
+                resultsDiv.classList.add('show');
+                return;
+            }
+
+            resultsDiv.innerHTML = filtered.map(p => 
+                `<a class="search-result-item" href="javascript:goToPlayerProfile('${p.username}')">#${p.rank} - ${p.username} (${p.points} pts)</a>`
+            ).join('');
+            resultsDiv.classList.add('show');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
